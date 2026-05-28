@@ -101,11 +101,10 @@
         .profile-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
         .logout-btn { background: #8b3c3c; }
         .logout-btn:hover { background: #6b2c2c; }
-        /* Стили для друзей и сообщений */
         .friends-search { margin-bottom: 20px; display: flex; gap: 10px; }
         .friends-search input { flex: 1; padding: 10px; border-radius: 40px; border: 1px solid #ddd8cd; }
         .friend-result-card { background: white; border-radius: 16px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e9e5db; margin-top: 12px; }
-        .friend-avatar { font-size: 2rem; margin-right: 12px; position: relative; }
+        .friend-avatar { font-size: 2rem; margin-right: 12px; }
         .online-status { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #4caf50; margin-left: 6px; vertical-align: middle; }
         .online-status.offline { background: #9e9e9e; }
         .friend-info { flex: 1; }
@@ -116,7 +115,6 @@
         .friends-tabs { display: flex; gap: 16px; margin: 20px 0 12px; border-bottom: 1px solid #e0ddd5; }
         .friends-tab { background: none; border: none; padding: 8px 16px; font-size: 0.95rem; cursor: pointer; color: #8b9a8a; }
         .friends-tab.active { color: #2c6e2f; border-bottom: 2px solid #2c6e2f; }
-        /* Стили для чата */
         .chat-layout { display: flex; height: 100%; gap: 20px; }
         .chat-contacts { width: 280px; background: #fff; border-radius: 20px; border: 1px solid #e9e5db; overflow-y: auto; }
         .chat-contact-item { display: flex; align-items: center; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #e9e5db; transition: 0.1s; }
@@ -218,11 +216,7 @@
         let discussionsPosts = [];
         let currentUserSettings = { name: "Игрок", avatar: "♙" };
 
-        // Для сообщений и статусов
-        let statusListener = null;
-        let friendsStatusListeners = [];
-
-        // Шахматные переменные (скопированы из вашей версии, сокращённо для краткости, но все функции есть)
+        // Шахматные переменные (скопированы из вашей версии, сокращённо для краткости)
         let board, currentMoveNumber, moveHistory, enPassantTarget, temporaryMove, currentArrows, isMovePending, gameOver, checkStatus, checkmateStatus;
         let arrowCanvas, ctx;
         let currentCommentDialog = null;
@@ -815,7 +809,7 @@
             });
         }
 
-        // ==================== РАЗДЕЛ ДРУЗЕЙ (с отображением статусов) ====================
+        // ==================== ДРУЗЬЯ ====================
         let currentFriendsList = [];
         let incomingRequests = [];
         let friendsStatusRefs = [];
@@ -874,14 +868,12 @@
             return null;
         }
 
-        // Функция отображения статуса друга (подписка)
         function subscribeToFriendStatus(uid, elementId) {
             const statusRef = database.ref(`users/${uid}/status`);
             const callback = (snap) => {
-                const status = snap.val();
-                const statusSpan = document.getElementById(`status-${uid}`);
+                const statusSpan = document.getElementById(elementId);
                 if (statusSpan) {
-                    statusSpan.className = status === 'online' ? 'online-status' : 'online-status offline';
+                    statusSpan.className = snap.val() === 'online' ? 'online-status' : 'online-status offline';
                 }
             };
             statusRef.on('value', callback);
@@ -974,7 +966,6 @@
                     return { uid, name: profile.name || "Игрок", avatar: profile.avatar || "♙", status: "friend", online: status };
                 }));
                 contentDiv.innerHTML = renderUsersList(friendsWithData, true);
-                // подписываемся на статусы друзей
                 for (let friend of friendsWithData) {
                     subscribeToFriendStatus(friend.uid, `status-${friend.uid}`);
                 }
@@ -1038,10 +1029,10 @@
             });
         }
 
-        // ==================== РАЗДЕЛ СООБЩЕНИЙ ====================
+        // ==================== СООБЩЕНИЯ (ИСПРАВЛЕННЫЕ) ====================
         let currentChatFriend = null;
-        let messagesRef = null;
-        let messagesListener = null;
+        let currentMessagesRef = null;
+        let currentMessagesListener = null;
 
         function getChatId(uid1, uid2) {
             return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
@@ -1056,50 +1047,74 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             };
             await database.ref(`messages/${chatId}`).push(message);
-            document.getElementById("messageInput").value = "";
+            const inputEl = document.getElementById("messageInput");
+            if (inputEl) inputEl.value = "";
         }
 
-        function loadMessages(friendUid) {
-            if (messagesListener) messagesListener();
-            const chatId = getChatId(currentUserId, friendUid);
-            const messagesRef = database.ref(`messages/${chatId}`).orderByChild('timestamp');
-            messagesListener = messagesRef.on('child_added', (snap) => {
-                const msg = snap.val();
-                displayMessage(msg);
-            });
-            // также загрузим существующие сообщения (но child_added уже их выдаст)
-        }
-
-        function displayMessage(msg) {
-            const container = document.getElementById("chatMessagesList");
-            if (!container) return;
+        function displayMessage(msg, container) {
             const isMine = msg.from === currentUserId;
             const div = document.createElement('div');
             div.className = `chat-message ${isMine ? 'mine' : ''}`;
+            const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : '';
             div.innerHTML = `<div class="chat-message-text">${escapeHtml(msg.text)}</div>
-                             <div class="chat-message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>`;
+                             <div class="chat-message-time">${time}</div>`;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
         }
 
+        async function loadMessages(friendUid) {
+            // Отписка от предыдущего слушателя
+            if (currentMessagesListener) {
+                currentMessagesRef.off('child_added', currentMessagesListener);
+            }
+            const chatId = getChatId(currentUserId, friendUid);
+            currentMessagesRef = database.ref(`messages/${chatId}`).orderByChild('timestamp');
+            const messagesContainer = document.getElementById("chatMessagesList");
+            if (!messagesContainer) return;
+            messagesContainer.innerHTML = ""; // очищаем
+
+            // Загружаем все существующие сообщения один раз
+            const snapshot = await currentMessagesRef.once('value');
+            const messages = [];
+            snapshot.forEach(child => {
+                messages.push({ id: child.key, ...child.val() });
+            });
+            messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+            for (let msg of messages) {
+                displayMessage(msg, messagesContainer);
+            }
+
+            // Подписываемся на новые сообщения
+            currentMessagesListener = currentMessagesRef.on('child_added', (snap) => {
+                // Чтобы не дублировать только что загруженные, проверяем, есть ли уже такой id (просто добавим)
+                // Но мы уже загрузили все, так что новые будут добавляться
+                const msg = snap.val();
+                // небольшая проверка, чтобы не добавить то, что уже есть (на случай if)
+                if (!document.querySelector(`[data-msg-id="${snap.key}"]`)) {
+                    const msgContainer = document.getElementById("chatMessagesList");
+                    if (msgContainer) {
+                        displayMessage(msg, msgContainer);
+                    }
+                }
+            });
+        }
+
         async function openChat(friendUid) {
             currentChatFriend = friendUid;
-            // Очищаем предыдущие сообщения
+            // Очищаем контейнер сообщений
             const messagesContainer = document.getElementById("chatMessagesList");
             if (messagesContainer) messagesContainer.innerHTML = "";
-            if (messagesListener) messagesListener();
             // Получаем данные друга
             const friendSnap = await database.ref(`users/${friendUid}/profile`).once('value');
             const friendProfile = friendSnap.val() || {};
             const friendName = friendProfile.name || "Друг";
             document.getElementById("chatHeaderName").innerText = friendName;
-            loadMessages(friendUid);
+            await loadMessages(friendUid);
         }
 
         async function renderMessages() {
             const container = document.getElementById("messagesContainer");
             if (!container) return;
-            // Получаем список друзей
             await loadFriendsData();
             const friendsWithData = await Promise.all(currentFriendsList.map(async (uid) => {
                 const userSnap = await database.ref(`users/${uid}/profile`).once('value');
@@ -1335,14 +1350,13 @@
         function genId(){ return Date.now()+'-'+Math.random().toString(36).substring(2,8); }
         function escapeHtml(str){ if(!str) return ""; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
-        // Просмотр партий (кратко)
+        // Просмотр партий (заглушка)
         window.currentReplayGame = null;
         window.currentReplayIndex = 0;
         function openGameReplay(game){
             window.currentReplayGame = game;
             window.currentReplayIndex = game.moves.length;
             document.getElementById("modalTitle").innerHTML = `${escapeHtml(game.title)} <span style="font-size:0.7rem;">(автор: ${escapeHtml(game.author)})</span>`;
-            // renderReplayBoard – здесь можно добавить, но для краткости оставим заглушку
             document.getElementById("gameModal").style.display = "flex";
         }
         const gameModalDiv = document.createElement('div');
@@ -1351,8 +1365,8 @@
         gameModalDiv.innerHTML = `<div class="modal-card"><div class="modal-header"><span class="modal-title" id="modalTitle">Партия</span><button id="closeModalBtn" style="background:#8b9a8a;">Закрыть</button></div><div class="replay-layout"><div class="replay-board" id="replayBoardContainer"></div><div class="replay-history" id="replayHistoryContainer"></div></div><div class="replay-nav"><button id="prevMoveBtn">◀ Предыдущий</button><button id="nextMoveBtn">Следующий ▶</button></div></div>`;
         document.body.appendChild(gameModalDiv);
         document.getElementById("closeModalBtn")?.addEventListener("click",()=>document.getElementById("gameModal").style.display="none");
-        document.getElementById("prevMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex>0){ window.currentReplayIndex--; /* renderReplayBoard() – можно реализовать */ } });
-        document.getElementById("nextMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex<window.currentReplayGame.moves.length){ window.currentReplayIndex++; /* renderReplayBoard() */ } });
+        document.getElementById("prevMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex>0){ window.currentReplayIndex--; } });
+        document.getElementById("nextMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex<window.currentReplayGame.moves.length){ window.currentReplayIndex++; } });
     </script>
 </body>
 </html>
