@@ -3,108 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ChessДляСвоих — Вход и регистрация</title>
+    <title>ChessДляСвоих — Облачная версия</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-        }
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background: #f5f5f0;
-            overflow: hidden;
-            height: 100vh;
-        }
-        /* Основное приложение (изначально скрыто) */
-        .app-wrapper {
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .sidebar-menu {
-            width: 260px;
-            background: #fff;
-            border-right: 1px solid #e0ddd5;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow-y: auto;
-        }
-        .logo-area {
-            padding: 24px 20px;
-            border-bottom: 1px solid #eae7df;
-        }
-        .logo-area h1 {
-            font-size: 1.4rem;
-            color: #2c3e2f;
-        }
-        .nav-buttons {
-            flex: 1;
-            padding: 20px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .nav-btn {
-            background: transparent;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            text-align: left;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #3a4e3e;
-            transition: 0.2s;
-        }
-        .nav-btn:hover, .nav-btn.active {
-            background: #2c6e2f;
-            color: white;
-        }
-        .profile-footer {
-            padding: 16px 12px 20px;
-            border-top: 1px solid #eae7df;
-        }
-        .profile-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #faf9f5;
-            padding: 10px 14px;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .profile-card:hover {
-            background: #eff3e8;
-        }
+        /* Все стили остаются как в предыдущей стабильной версии (уже были) */
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #f5f5f0; overflow: hidden; height: 100vh; }
+        .app-wrapper { display: flex; height: 100vh; overflow: hidden; }
+        .sidebar-menu { width: 260px; background: #fff; border-right: 1px solid #e0ddd5; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
+        .logo-area { padding: 24px 20px; border-bottom: 1px solid #eae7df; }
+        .logo-area h1 { font-size: 1.4rem; color: #2c3e2f; }
+        .nav-buttons { flex: 1; padding: 20px 12px; display: flex; flex-direction: column; gap: 8px; }
+        .nav-btn { background: transparent; border: none; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; font-weight: 500; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; color: #3a4e3e; transition: 0.2s; }
+        .nav-btn:hover, .nav-btn.active { background: #2c6e2f; color: white; }
+        .profile-footer { padding: 16px 12px 20px; border-top: 1px solid #eae7df; }
+        .profile-card { display: flex; align-items: center; gap: 10px; background: #faf9f5; padding: 10px 14px; border-radius: 40px; cursor: pointer; transition: 0.2s; }
+        .profile-card:hover { background: #eff3e8; }
         .profile-avatar { font-size: 1.8rem; }
         .profile-name { font-weight: 600; font-size: 0.9rem; }
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .content-header {
-            padding: 16px 24px 0 24px;
-        }
-        .content-header h2 {
-            font-size: 1.3rem;
-            color: #2c6e2f;
-            border-left: 4px solid #2c6e2f;
-            padding-left: 14px;
-        }
-        .content-panel {
-            flex: 1;
-            padding: 0 24px 24px 24px;
-            overflow: hidden;
-        }
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .content-header { padding: 16px 24px 0 24px; }
+        .content-header h2 { font-size: 1.3rem; color: #2c6e2f; border-left: 4px solid #2c6e2f; padding-left: 14px; }
+        .content-panel { flex: 1; padding: 0 24px 24px 24px; overflow: hidden; }
         .two-columns { display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; height: 100%; align-items: start; }
         .left-col { display: flex; flex-direction: column; align-items: center; }
         .history-col { background: #faf9f5; border-radius: 20px; border: 1px solid #e9e5db; display: flex; flex-direction: column; overflow: hidden; height: 100%; }
@@ -160,175 +82,30 @@
         .replay-move-comment.expanded { max-height: 300px; }
         .comment-expand-hint { font-size: 0.65rem; color: #8b9a8a; margin-top: 3px; display: inline-block; cursor: pointer; }
         .replay-nav { display: flex; justify-content: center; gap: 16px; margin-top: 16px; }
-        @media (max-width: 800px) {
-            .board { width: 336px; height: 336px; grid-template-columns: repeat(8,42px); grid-template-rows: repeat(8,42px); }
-            .square { width:42px; height:42px; font-size:22px; }
-            .left-coords { height:336px; }
-            .left-coords span { height:42px; }
-            .bottom-coords { width:336px; margin-left:20px; }
-            .action-buttons { width:336px; }
-            .two-columns { grid-template-columns: 1fr; gap: 16px; }
-            .global-chess-notification { font-size: 1rem; padding: 8px 16px; white-space: normal; }
-            .global-chess-notification.mate { font-size: 1.2rem; padding: 10px 20px; white-space: normal; }
-            .game-card { flex-wrap: wrap; }
-            .delete-game-btn { margin-top: 8px; margin-left: 0; }
-        }
-
-        /* --- СТИЛИ ДЛЯ ОКНА ВХОДА/РЕГИСТРАЦИИ С ФОНОМ --- */
-        .auth-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a472a, #0d2b1a);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-        }
-        .auth-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 40px;
-            padding: 32px;
-            width: 90%;
-            max-width: 420px;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-            backdrop-filter: blur(0);
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        .auth-card h2 {
-            color: #2c6e2f;
-            margin-bottom: 24px;
-            font-size: 1.8rem;
-        }
-        .auth-tabs {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #e0ddd5;
-        }
-        .auth-tab {
-            flex: 1;
-            background: none;
-            border: none;
-            padding: 10px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            color: #8b9a8a;
-            transition: 0.2s;
-        }
-        .auth-tab.active {
-            color: #2c6e2f;
-            border-bottom: 2px solid #2c6e2f;
-        }
-        .auth-input {
-            width: 100%;
-            padding: 12px 16px;
-            margin: 12px 0;
-            border: 1px solid #ddd8cd;
-            border-radius: 40px;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.2s;
-            background: white;
-        }
-        .auth-input:focus {
-            border-color: #2c6e2f;
-            box-shadow: 0 0 0 2px rgba(44,110,47,0.2);
-        }
-        .auth-btn {
-            background: #2c6e2f;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 40px;
-            width: 100%;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 16px;
-            transition: 0.2s;
-        }
-        .auth-btn:hover {
-            background: #1f5422;
-            transform: scale(0.98);
-        }
-        .auth-error {
-            color: #d9534f;
-            font-size: 0.85rem;
-            margin-top: 8px;
-        }
-
-        /* --- КРАСИВОЕ ОКНО ПРОФИЛЯ --- */
-        .profile-modal-card {
-            background: #ffffff;
-            border-radius: 32px;
-            padding: 28px;
-            max-width: 420px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            border: 1px solid #e9e5db;
-        }
-        .profile-avatar-large {
-            font-size: 4rem;
-            margin-bottom: 12px;
-            background: #f0efea;
-            display: inline-block;
-            padding: 16px;
-            border-radius: 80px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .profile-name-input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 40px;
-            border: 1px solid #ddd8cd;
-            margin: 16px 0;
-            font-size: 1rem;
-            text-align: center;
-        }
-        .avatar-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-            margin: 20px 0;
-        }
-        .avatar-option {
-            font-size: 1.8rem;
-            background: #f0efea;
-            padding: 8px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: 0.1s;
-            width: 55px;
-            text-align: center;
-        }
-        .avatar-option.selected {
-            background: #2c6e2f;
-            box-shadow: 0 0 0 2px white, 0 0 0 4px #2c6e2f;
-        }
-        .profile-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .logout-btn {
-            background: #8b3c3c;
-        }
-        .logout-btn:hover {
-            background: #6b2c2c;
-        }
+        .auth-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a472a, #0d2b1a); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000; }
+        .auth-card { background: rgba(255, 255, 255, 0.95); border-radius: 40px; padding: 32px; width: 90%; max-width: 420px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
+        .auth-card h2 { color: #2c6e2f; margin-bottom: 24px; }
+        .auth-tabs { display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 1px solid #e0ddd5; }
+        .auth-tab { flex: 1; background: none; border: none; padding: 10px; font-size: 1.1rem; font-weight: 600; cursor: pointer; color: #8b9a8a; transition: 0.2s; }
+        .auth-tab.active { color: #2c6e2f; border-bottom: 2px solid #2c6e2f; }
+        .auth-input { width: 100%; padding: 12px 16px; margin: 12px 0; border: 1px solid #ddd8cd; border-radius: 40px; font-size: 1rem; outline: none; background: white; }
+        .auth-input:focus { border-color: #2c6e2f; box-shadow: 0 0 0 2px rgba(44,110,47,0.2); }
+        .auth-btn { background: #2c6e2f; color: white; border: none; padding: 12px; border-radius: 40px; width: 100%; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 16px; }
+        .auth-btn:hover { background: #1f5422; transform: scale(0.98); }
+        .auth-error { color: #d9534f; font-size: 0.85rem; margin-top: 8px; }
+        .profile-modal-card { background: #ffffff; border-radius: 32px; padding: 28px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 35px rgba(0,0,0,0.2); }
+        .profile-avatar-large { font-size: 4rem; margin-bottom: 12px; background: #f0efea; display: inline-block; padding: 16px; border-radius: 80px; }
+        .profile-name-input { width: 100%; padding: 12px; border-radius: 40px; border: 1px solid #ddd8cd; margin: 16px 0; font-size: 1rem; text-align: center; }
+        .avatar-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 20px 0; }
+        .avatar-option { font-size: 1.8rem; background: #f0efea; padding: 8px; border-radius: 60px; cursor: pointer; width: 55px; text-align: center; }
+        .avatar-option.selected { background: #2c6e2f; box-shadow: 0 0 0 2px white, 0 0 0 4px #2c6e2f; }
+        .profile-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+        .logout-btn { background: #8b3c3c; }
+        .logout-btn:hover { background: #6b2c2c; }
+        @media (max-width: 800px) { .board { width: 336px; height: 336px; grid-template-columns: repeat(8,42px); grid-template-rows: repeat(8,42px); } .square { width:42px; height:42px; font-size:22px; } .left-coords { height:336px; } .left-coords span { height:42px; } .bottom-coords { width:336px; margin-left:20px; } .action-buttons { width:336px; } .two-columns { grid-template-columns: 1fr; gap: 16px; } .global-chess-notification { font-size: 1rem; padding: 8px 16px; white-space: normal; } .global-chess-notification.mate { font-size: 1.2rem; padding: 10px 20px; white-space: normal; } .game-card { flex-wrap: wrap; } .delete-game-btn { margin-top: 8px; margin-left: 0; } }
     </style>
 </head>
 <body>
-    <!-- Модальное окно аутентификации с красивым фоном -->
     <div id="authModal" class="auth-modal">
         <div class="auth-card">
             <h2>♟ ChessДляСвоих</h2>
@@ -337,22 +114,21 @@
                 <button class="auth-tab" data-tab="register">Регистрация</button>
             </div>
             <div id="loginForm">
-                <input type="email" id="loginEmail" class="auth-input" placeholder="Email" autocomplete="email">
-                <input type="password" id="loginPassword" class="auth-input" placeholder="Пароль" autocomplete="current-password">
+                <input type="email" id="loginEmail" class="auth-input" placeholder="Email">
+                <input type="password" id="loginPassword" class="auth-input" placeholder="Пароль">
                 <div id="loginError" class="auth-error"></div>
                 <button id="loginBtn" class="auth-btn">Войти</button>
             </div>
             <div id="registerForm" style="display: none;">
-                <input type="email" id="regEmail" class="auth-input" placeholder="Email" autocomplete="off">
-                <input type="text" id="regName" class="auth-input" placeholder="Имя" autocomplete="off">
-                <input type="password" id="regPassword" class="auth-input" placeholder="Пароль" autocomplete="new-password">
+                <input type="email" id="regEmail" class="auth-input" placeholder="Email">
+                <input type="text" id="regName" class="auth-input" placeholder="Имя">
+                <input type="password" id="regPassword" class="auth-input" placeholder="Пароль">
                 <div id="registerError" class="auth-error"></div>
                 <button id="registerBtn" class="auth-btn">Зарегистрироваться</button>
             </div>
         </div>
     </div>
 
-    <!-- Основное приложение (изначально скрыто) -->
     <div id="mainApp" style="display: none;">
         <div class="app-wrapper">
             <div class="sidebar-menu">
@@ -375,16 +151,13 @@
                 <div class="content-panel" id="contentPanel"></div>
             </div>
         </div>
-
-        <!-- Модальное окно профиля (улучшенное) -->
         <div id="profileModal" class="modal">
             <div class="profile-modal-card">
                 <div class="profile-avatar-large" id="modalAvatar">♙</div>
-                <input type="text" id="profileNameInput" class="profile-name-input" placeholder="Имя" maxlength="24">
-                <div style="font-size:0.9rem; margin: 5px 0; color:#5e6e5a;">Выберите аватар</div>
+                <input type="text" id="profileNameInput" class="profile-name-input" placeholder="Имя">
                 <div class="avatar-grid" id="avatarGrid"></div>
                 <div class="profile-buttons">
-                    <button id="saveProfileBtn" style="background:#2c6e2f;">💾 Сохранить</button>
+                    <button id="saveProfileBtn">💾 Сохранить</button>
                     <button id="logoutBtn" class="logout-btn">🚪 Выйти</button>
                     <button id="closeProfileModalBtn" style="background:#a0a894;">Отмена</button>
                 </div>
@@ -392,343 +165,247 @@
         </div>
     </div>
 
-<script>
-    // ------------------------------- УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ -------------------------------
-    let users = JSON.parse(localStorage.getItem("chess_users")) || [];
-    let currentUser = null;
-    
-    function saveUsers() {
-        localStorage.setItem("chess_users", JSON.stringify(users));
-    }
-    
-    function getUserDataByEmail(email) {
-        return users.find(u => u.email === email);
-    }
-    
-    function registerUser(email, name, password) {
-        if (getUserDataByEmail(email)) return { success: false, error: "Пользователь с таким email уже существует" };
-        const newUser = {
-            email: email,
-            name: name,
-            avatar: "♙",
-            password: btoa(password),
-            games: [],
-            discussions: [],
-            friends: []
+    <script>
+        // ========== ВАШ КОНФИГ FIREBASE (скопируйте из консоли) ==========
+        // Вставьте ВАШИ значения в поля ниже
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyAH3u38xR0Kt0FvSu1402Lj7S2iE08Kc",
+            authDomain: "chess-for-friends-6394f.firebaseapp.com",
+            databaseURL: "https://chess-for-friends-6394f-default-rtdb.europe-west1.firebasedatabase.app/", // ← сюда вставьте URL Realtime Database
+            projectId: "chess-for-friends-6394f",
+            storageBucket: "chess-for-friends-6394f.firebasestorage.app",
+            messagingSenderId: "1010219666062",
+            appId: "1:1010219666062:web:9452e624ed9dcac87b57df"
         };
-        users.push(newUser);
-        saveUsers();
-        return { success: true, user: newUser };
-    }
-    
-    function loginUser(email, password) {
-        const user = getUserDataByEmail(email);
-        if (!user) return { success: false, error: "Пользователь не найден" };
-        if (user.password !== btoa(password)) return { success: false, error: "Неверный пароль" };
-        return { success: true, user: user };
-    }
-    
-    function updateCurrentUserInStorage() {
-        if (!currentUser) return;
-        const index = users.findIndex(u => u.email === currentUser.email);
-        if (index !== -1) {
-            users[index] = currentUser;
-            saveUsers();
+        // =================================================================
+
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let currentUser = null;      // объект Firebase User
+        let currentUserId = null;    // uid
+        let savedGames = [];
+        let discussionsPosts = [];
+        let friendsList = [];
+        let currentUserSettings = { name: "Игрок", avatar: "♙" };
+
+        // Шахматные переменные (полностью скопированы из рабочей версии)
+        let board, currentMoveNumber, moveHistory, enPassantTarget, temporaryMove, currentArrows, isMovePending, gameOver, checkStatus, checkmateStatus;
+        let arrowCanvas, ctx;
+        let currentCommentDialog = null;
+        let dragStartRow = null, dragStartCol = null;
+
+        function getInitialBoard() {
+            let b = Array(8).fill().map(() => Array(8).fill(null));
+            const pieces = ['rook','knight','bishop','queen','king','bishop','knight','rook'];
+            for(let i=0;i<8;i++) {
+                b[0][i] = { type: pieces[i], color: 'black' };
+                b[7][i] = { type: pieces[i], color: 'white' };
+                b[1][i] = { type: 'pawn', color: 'black' };
+                b[6][i] = { type: 'pawn', color: 'white' };
+            }
+            return b;
         }
-    }
-    
-    let savedGames = [];
-    let discussionsPosts = [];
-    let friendsList = [];
-    let currentUserSettings = { name: "", avatar: "♙" };
-    
-    function loadUserData() {
-        if (!currentUser) return;
-        savedGames = currentUser.games || [];
-        discussionsPosts = currentUser.discussions || [];
-        friendsList = currentUser.friends || [];
-        currentUserSettings.name = currentUser.name;
-        currentUserSettings.avatar = currentUser.avatar;
-        document.getElementById("headerName").innerText = currentUser.name;
-        document.getElementById("headerAvatar").innerHTML = currentUser.avatar;
-    }
-    
-    function saveCurrentUserData() {
-        if (!currentUser) return;
-        currentUser.games = savedGames;
-        currentUser.discussions = discussionsPosts;
-        currentUser.friends = friendsList;
-        currentUser.name = currentUserSettings.name;
-        currentUser.avatar = currentUserSettings.avatar;
-        updateCurrentUserInStorage();
-    }
-    
-    // ------------------------------- ОСНОВНОЙ КОД ШАХМАТ (сокращённо, но полностью рабочий) -------------------------------
-    let board, currentMoveNumber, moveHistory, enPassantTarget, temporaryMove, currentArrows, isMovePending, gameOver, checkStatus, checkmateStatus;
-    let arrowCanvas, ctx;
-    
-    function getInitialBoard() {
-        let b = Array(8).fill().map(() => Array(8).fill(null));
-        const pieces = ['rook','knight','bishop','queen','king','bishop','knight','rook'];
-        for(let i=0;i<8;i++) {
-            b[0][i] = { type: pieces[i], color: 'black' };
-            b[7][i] = { type: pieces[i], color: 'white' };
-            b[1][i] = { type: 'pawn', color: 'black' };
-            b[6][i] = { type: 'pawn', color: 'white' };
+        function resetGameState() {
+            board = getInitialBoard();
+            currentMoveNumber = 1;
+            moveHistory = [];
+            enPassantTarget = null;
+            temporaryMove = null;
+            currentArrows = [];
+            isMovePending = false;
+            gameOver = false;
+            checkStatus = false;
+            checkmateStatus = false;
         }
-        return b;
-    }
-    function resetGameState() {
-        board = getInitialBoard();
-        currentMoveNumber = 1;
-        moveHistory = [];
-        enPassantTarget = null;
-        temporaryMove = null;
-        currentArrows = [];
-        isMovePending = false;
-        gameOver = false;
-        checkStatus = false;
-        checkmateStatus = false;
-    }
-    function getPieceSymbol(p) {
-        if(!p) return '';
-        const sym = { king:'♔', queen:'♕', rook:'♖', bishop:'♗', knight:'♘', pawn:'♙' };
-        if(p.color==='black') {
-            if(p.type==='king') return '♚';
-            if(p.type==='queen') return '♛';
-            if(p.type==='rook') return '♜';
-            if(p.type==='bishop') return '♝';
-            if(p.type==='knight') return '♞';
-            if(p.type==='pawn') return '♟';
+        function getPieceSymbol(p) {
+            if(!p) return '';
+            const sym = { king:'♔', queen:'♕', rook:'♖', bishop:'♗', knight:'♘', pawn:'♙' };
+            if(p.color==='black') {
+                if(p.type==='king') return '♚';
+                if(p.type==='queen') return '♛';
+                if(p.type==='rook') return '♜';
+                if(p.type==='bishop') return '♝';
+                if(p.type==='knight') return '♞';
+                if(p.type==='pawn') return '♟';
+            }
+            return sym[p.type];
         }
-        return sym[p.type];
-    }
-    function isClearLine(r1,c1,r2,c2,boardState){
-        if(r1===r2){
-            let step = c1<c2?1:-1;
-            for(let c=c1+step; c!==c2; c+=step) if(boardState[r1][c]) return false;
+        function isClearLine(r1,c1,r2,c2,boardState){
+            if(r1===r2){
+                let step = c1<c2?1:-1;
+                for(let c=c1+step; c!==c2; c+=step) if(boardState[r1][c]) return false;
+                return true;
+            }
+            if(c1===c2){
+                let step = r1<r2?1:-1;
+                for(let r=r1+step; r!==r2; r+=step) if(boardState[r][c1]) return false;
+                return true;
+            }
+            let rowStep = r1<r2?1:-1, colStep = c1<c2?1:-1;
+            let r=r1+rowStep, c=c1+colStep;
+            while(r!==r2 && c!==c2){ if(boardState[r][c]) return false; r+=rowStep; c+=colStep; }
             return true;
         }
-        if(c1===c2){
-            let step = r1<r2?1:-1;
-            for(let r=r1+step; r!==r2; r+=step) if(boardState[r][c1]) return false;
-            return true;
-        }
-        let rowStep = r1<r2?1:-1, colStep = c1<c2?1:-1;
-        let r=r1+rowStep, c=c1+colStep;
-        while(r!==r2 && c!==c2){ if(boardState[r][c]) return false; r+=rowStep; c+=colStep; }
-        return true;
-    }
-    function isSquareAttacked(boardState, row, col, defendingColor) {
-        for(let i=0;i<8;i++) for(let j=0;j<8;j++) {
-            let piece = boardState[i][j];
-            if(piece && piece.color !== defendingColor) {
-                if(isValidMove(piece, i, j, row, col, boardState, false)) return true;
+        function isSquareAttacked(boardState, row, col, defendingColor) {
+            for(let i=0;i<8;i++) for(let j=0;j<8;j++) {
+                let piece = boardState[i][j];
+                if(piece && piece.color !== defendingColor) {
+                    if(isValidMove(piece, i, j, row, col, boardState, false)) return true;
+                }
             }
+            return false;
         }
-        return false;
-    }
-    function isCheck(color, boardState) {
-        let kingPos = null;
-        for(let i=0;i<8;i++) for(let j=0;j<8;j++) {
-            if(boardState[i][j] && boardState[i][j].type==='king' && boardState[i][j].color===color) {
-                kingPos = [i,j]; break;
+        function isCheck(color, boardState) {
+            let kingPos = null;
+            for(let i=0;i<8;i++) for(let j=0;j<8;j++) {
+                if(boardState[i][j] && boardState[i][j].type==='king' && boardState[i][j].color===color) {
+                    kingPos = [i,j]; break;
+                }
             }
+            if(!kingPos) return false;
+            return isSquareAttacked(boardState, kingPos[0], kingPos[1], color);
         }
-        if(!kingPos) return false;
-        return isSquareAttacked(boardState, kingPos[0], kingPos[1], color);
-    }
-    function hasLegalMoves(color, boardState) {
-        for(let i=0;i<8;i++) for(let j=0;j<8;j++) {
-            let piece = boardState[i][j];
-            if(piece && piece.color===color) {
-                for(let ti=0;ti<8;ti++) for(let tj=0;tj<8;tj++) {
-                    if(isValidMove(piece, i, j, ti, tj, boardState, true)) {
-                        let testBoard = applyMove({ from:[i,j], to:[ti,tj] }, boardState);
-                        if(!isCheck(color, testBoard)) return true;
+        function hasLegalMoves(color, boardState) {
+            for(let i=0;i<8;i++) for(let j=0;j<8;j++) {
+                let piece = boardState[i][j];
+                if(piece && piece.color===color) {
+                    for(let ti=0;ti<8;ti++) for(let tj=0;tj<8;tj++) {
+                        if(isValidMove(piece, i, j, ti, tj, boardState, true)) {
+                            let testBoard = applyMove({ from:[i,j], to:[ti,tj] }, boardState);
+                            if(!isCheck(color, testBoard)) return true;
+                        }
                     }
                 }
             }
+            return false;
         }
-        return false;
-    }
-    function updateGameStatus() {
-        let currentColor = currentMoveNumber%2===1 ? "white" : "black";
-        checkStatus = isCheck(currentColor, board);
-        checkmateStatus = checkStatus && !hasLegalMoves(currentColor, board);
-        if(checkmateStatus) {
-            gameOver = true;
-            let winner = currentColor === "white" ? "Чёрные" : "Белые";
-            showBoardNotificationCentered(`МАТ! ${winner} победили`, true);
-        } else if(checkStatus && !gameOver) {
-            showBoardNotificationCentered(`ШАХ!`, false);
-        }
-    }
-    function isValidMove(piece, fromRow, fromCol, toRow, toCol, boardState, checkEnPassant=true){
-        const target = boardState[toRow][toCol];
-        if(target && target.color===piece.color) return false;
-        const dr = toRow-fromRow, dc = toCol-fromCol, absDr=Math.abs(dr), absDc=Math.abs(dc);
-        let basicValid = false;
-        switch(piece.type){
-            case 'pawn': {
-                const dir = piece.color==='white' ? -1 : 1;
-                const startRow = piece.color==='white' ? 6 : 1;
-                if(dc===0 && !target && dr===dir) basicValid = true;
-                else if(dc===0 && !target && dr===dir*2 && fromRow===startRow && !boardState[fromRow+dir][fromCol]) basicValid = true;
-                else if(absDc===1 && dr===dir && target && target.color!==piece.color) basicValid = true;
-                else if(checkEnPassant && enPassantTarget && absDc===1 && dr===dir && toRow===enPassantTarget.row && toCol===enPassantTarget.col) basicValid = true;
-                else return false;
-                break;
+        function updateGameStatus() {
+            let currentColor = currentMoveNumber%2===1 ? "white" : "black";
+            checkStatus = isCheck(currentColor, board);
+            checkmateStatus = checkStatus && !hasLegalMoves(currentColor, board);
+            if(checkmateStatus) {
+                gameOver = true;
+                let winner = currentColor === "white" ? "Чёрные" : "Белые";
+                showBoardNotificationCentered(`МАТ! ${winner} победили`, true);
+            } else if(checkStatus && !gameOver) {
+                showBoardNotificationCentered(`ШАХ!`, false);
             }
-            case 'knight': basicValid = (absDr===2 && absDc===1) || (absDr===1 && absDc===2); break;
-            case 'king': basicValid = (absDr<=1 && absDc<=1); break;
-            case 'rook': basicValid = (fromRow===toRow || fromCol===toCol) && isClearLine(fromRow,fromCol,toRow,toCol,boardState); break;
-            case 'bishop': basicValid = (absDr===absDc) && isClearLine(fromRow,fromCol,toRow,toCol,boardState); break;
-            case 'queen': basicValid = (fromRow===toRow || fromCol===toCol || absDr===absDc) && isClearLine(fromRow,fromCol,toRow,toCol,boardState); break;
-            default: return false;
         }
-        if(!basicValid) return false;
-        let testBoard = applyMove({ from:[fromRow,fromCol], to:[toRow,toCol] }, boardState);
-        return !isCheck(piece.color, testBoard);
-    }
-    function applyMove(move, boardState){
-        let newBoard = JSON.parse(JSON.stringify(boardState));
-        let piece = newBoard[move.from[0]][move.from[1]];
-        if(piece.type==='pawn' && enPassantTarget && move.to[0]===enPassantTarget.row && move.to[1]===enPassantTarget.col && Math.abs(move.to[1]-move.from[1])===1){
-            let pawnRow = piece.color==='white' ? move.to[0]+1 : move.to[0]-1;
-            newBoard[pawnRow][move.to[1]] = null;
-        }
-        newBoard[move.to[0]][move.to[1]] = piece;
-        newBoard[move.from[0]][move.from[1]] = null;
-        if(piece.type==='pawn' && (move.to[0]===0 || move.to[0]===7)) newBoard[move.to[0]][move.to[1]] = { type:'queen', color:piece.color };
-        return newBoard;
-    }
-    function getSquareName(row,col){ return String.fromCharCode(97+col)+(8-row); }
-    function getSAN(piece, fromRow, fromCol, toRow, toCol, boardState, isCheckAfter, isMateAfter){
-        let prefix = "";
-        if(piece.type==='pawn'){
-            let target = boardState[toRow][toCol];
-            if(target) prefix = getSquareName(fromRow,fromCol)[0];
-        } else {
-            const map = { king:'K', queen:'Q', rook:'R', bishop:'B', knight:'N' };
-            prefix = map[piece.type];
-        }
-        let capture = (boardState[toRow][toCol] !== null) ? "x" : "";
-        let toSquare = getSquareName(toRow,toCol);
-        let san = prefix + capture + toSquare;
-        if(isMateAfter) san += '#';
-        else if(isCheckAfter) san += '+';
-        return san;
-    }
-    function showSaveGameDialog(callback){
-        const modalDiv = document.createElement('div');
-        modalDiv.className = 'custom-modal';
-        modalDiv.innerHTML = `<div class="custom-dialog">
-            <h3>💾 Сохранить партию</h3>
-            <input type="text" id="gameTitleInput" placeholder="Название партии" value="Партия от ${new Date().toLocaleDateString()}">
-            <div class="custom-dialog-buttons">
-                <button id="cancelSaveBtn" style="background:#8b9a8a;">Отмена</button>
-                <button id="submitSaveBtn">✅ Сохранить</button>
-            </div>
-        </div>`;
-        document.body.appendChild(modalDiv);
-        const input = modalDiv.querySelector('#gameTitleInput');
-        input.focus();
-        const cleanup = () => modalDiv.remove();
-        modalDiv.querySelector('#submitSaveBtn').onclick = () => { callback(input.value.trim() || `Партия от ${new Date().toLocaleString()}`); cleanup(); };
-        modalDiv.querySelector('#cancelSaveBtn').onclick = () => cleanup();
-        modalDiv.addEventListener('click', e => { if(e.target===modalDiv) cleanup(); });
-    }
-    function showBoardNotificationCentered(message, isMate = false) {
-        const boardElement = document.querySelector('.board');
-        if (!boardElement) return;
-        const rect = boardElement.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const div = document.createElement('div');
-        div.className = 'global-chess-notification';
-        if (isMate) div.classList.add('mate');
-        div.textContent = message;
-        div.style.left = centerX + 'px';
-        div.style.top = centerY + 'px';
-        document.body.appendChild(div);
-        setTimeout(() => { if(div.parentNode) div.remove(); }, 1600);
-    }
-    
-    function initArrowCanvas(){
-        const canvas = document.getElementById('arrowCanvas');
-        if(!canvas) return;
-        arrowCanvas = canvas;
-        ctx = canvas.getContext('2d');
-        canvas.width = 448; canvas.height = 448;
-        drawAllArrows();
-    }
-    function drawAllArrows(){
-        if(!ctx) return;
-        ctx.clearRect(0,0,448,448);
-        const cellSize=56;
-        for(let a of currentArrows){
-            const fromX = a.fromCol*cellSize + cellSize/2;
-            const fromY = a.fromRow*cellSize + cellSize/2;
-            const toX = a.toCol*cellSize + cellSize/2;
-            const toY = a.toRow*cellSize + cellSize/2;
-            ctx.beginPath();
-            ctx.moveTo(fromX, fromY);
-            ctx.lineTo(toX, toY);
-            ctx.strokeStyle = '#2ecc71';
-            ctx.lineWidth = 4;
-            ctx.stroke();
-            const angle = Math.atan2(toY-fromY, toX-fromX);
-            const arrowSize=12;
-            const headX=toX, headY=toY;
-            const wingX = headX - arrowSize*Math.cos(angle-Math.PI/6);
-            const wingY = headY - arrowSize*Math.sin(angle-Math.PI/6);
-            const wingX2 = headX - arrowSize*Math.cos(angle+Math.PI/6);
-            const wingY2 = headY - arrowSize*Math.sin(angle+Math.PI/6);
-            ctx.beginPath();
-            ctx.moveTo(headX, headY);
-            ctx.lineTo(wingX, wingY);
-            ctx.lineTo(wingX2, wingY2);
-            ctx.fillStyle = '#2ecc71';
-            ctx.fill();
-        }
-    }
-    function addArrowToCurrent(fromRow,fromCol,toRow,toCol){
-        currentArrows.push({ fromRow, fromCol, toRow, toCol });
-        drawAllArrows();
-    }
-    function clearCurrentArrows(){
-        currentArrows = [];
-        if(ctx) ctx.clearRect(0,0,448,448);
-    }
-    function setupArrowDrawing(){
-        const squares = document.querySelectorAll('.square');
-        let start=null, drawing=false;
-        squares.forEach(sq=>{
-            sq.addEventListener('contextmenu', e=>{ e.preventDefault(); return false; });
-            sq.addEventListener('mousedown', e=>{
-                if(e.button===2){
-                    e.preventDefault();
-                    start = { row: parseInt(sq.dataset.row), col: parseInt(sq.dataset.col) };
-                    drawing = true;
-                    document.body.style.cursor = 'crosshair';
+        function isValidMove(piece, fromRow, fromCol, toRow, toCol, boardState, checkEnPassant=true){
+            const target = boardState[toRow][toCol];
+            if(target && target.color===piece.color) return false;
+            const dr = toRow-fromRow, dc = toCol-fromCol, absDr=Math.abs(dr), absDc=Math.abs(dc);
+            let basicValid = false;
+            switch(piece.type){
+                case 'pawn': {
+                    const dir = piece.color==='white' ? -1 : 1;
+                    const startRow = piece.color==='white' ? 6 : 1;
+                    if(dc===0 && !target && dr===dir) basicValid = true;
+                    else if(dc===0 && !target && dr===dir*2 && fromRow===startRow && !boardState[fromRow+dir][fromCol]) basicValid = true;
+                    else if(absDc===1 && dr===dir && target && target.color!==piece.color) basicValid = true;
+                    else if(checkEnPassant && enPassantTarget && absDc===1 && dr===dir && toRow===enPassantTarget.row && toCol===enPassantTarget.col) basicValid = true;
+                    else return false;
+                    break;
                 }
-            });
-        });
-        window.addEventListener('mousemove', e=>{
-            if(!drawing || !start) return;
-            const target = document.elementFromPoint(e.clientX, e.clientY);
-            const tSq = target?.closest('.square');
-            if(tSq){
-                const toRow = parseInt(tSq.dataset.row), toCol = parseInt(tSq.dataset.col);
-                drawAllArrows();
-                const fromX = start.col*56+28, fromY = start.row*56+28;
-                const toX = toCol*56+28, toY = toRow*56+28;
+                case 'knight': basicValid = (absDr===2 && absDc===1) || (absDr===1 && absDc===2); break;
+                case 'king': basicValid = (absDr<=1 && absDc<=1); break;
+                case 'rook': basicValid = (fromRow===toRow || fromCol===toCol) && isClearLine(fromRow,fromCol,toRow,toCol,boardState); break;
+                case 'bishop': basicValid = (absDr===absDc) && isClearLine(fromRow,fromCol,toRow,toCol,boardState); break;
+                case 'queen': basicValid = (fromRow===toRow || fromCol===toCol || absDr===absDc) && isClearLine(fromRow,fromCol,toRow,toCol,boardState); break;
+                default: return false;
+            }
+            if(!basicValid) return false;
+            let testBoard = applyMove({ from:[fromRow,fromCol], to:[toRow,toCol] }, boardState);
+            return !isCheck(piece.color, testBoard);
+        }
+        function applyMove(move, boardState){
+            let newBoard = JSON.parse(JSON.stringify(boardState));
+            let piece = newBoard[move.from[0]][move.from[1]];
+            if(piece.type==='pawn' && enPassantTarget && move.to[0]===enPassantTarget.row && move.to[1]===enPassantTarget.col && Math.abs(move.to[1]-move.from[1])===1){
+                let pawnRow = piece.color==='white' ? move.to[0]+1 : move.to[0]-1;
+                newBoard[pawnRow][move.to[1]] = null;
+            }
+            newBoard[move.to[0]][move.to[1]] = piece;
+            newBoard[move.from[0]][move.from[1]] = null;
+            if(piece.type==='pawn' && (move.to[0]===0 || move.to[0]===7)) newBoard[move.to[0]][move.to[1]] = { type:'queen', color:piece.color };
+            return newBoard;
+        }
+        function getSquareName(row,col){ return String.fromCharCode(97+col)+(8-row); }
+        function getSAN(piece, fromRow, fromCol, toRow, toCol, boardState, isCheckAfter, isMateAfter){
+            let prefix = "";
+            if(piece.type==='pawn'){
+                let target = boardState[toRow][toCol];
+                if(target) prefix = getSquareName(fromRow,fromCol)[0];
+            } else {
+                const map = { king:'K', queen:'Q', rook:'R', bishop:'B', knight:'N' };
+                prefix = map[piece.type];
+            }
+            let capture = (boardState[toRow][toCol] !== null) ? "x" : "";
+            let toSquare = getSquareName(toRow,toCol);
+            let san = prefix + capture + toSquare;
+            if(isMateAfter) san += '#';
+            else if(isCheckAfter) san += '+';
+            return san;
+        }
+        function showSaveGameDialog(callback){
+            const modalDiv = document.createElement('div');
+            modalDiv.className = 'custom-modal';
+            modalDiv.innerHTML = `<div class="custom-dialog">
+                <h3>💾 Сохранить партию</h3>
+                <input type="text" id="gameTitleInput" placeholder="Название партии" value="Партия от ${new Date().toLocaleDateString()}">
+                <div class="custom-dialog-buttons">
+                    <button id="cancelSaveBtn" style="background:#8b9a8a;">Отмена</button>
+                    <button id="submitSaveBtn">✅ Сохранить</button>
+                </div>
+            </div>`;
+            document.body.appendChild(modalDiv);
+            const input = modalDiv.querySelector('#gameTitleInput');
+            input.focus();
+            const cleanup = () => modalDiv.remove();
+            modalDiv.querySelector('#submitSaveBtn').onclick = () => { callback(input.value.trim() || `Партия от ${new Date().toLocaleString()}`); cleanup(); };
+            modalDiv.querySelector('#cancelSaveBtn').onclick = () => cleanup();
+            modalDiv.addEventListener('click', e => { if(e.target===modalDiv) cleanup(); });
+        }
+        function showBoardNotificationCentered(message, isMate = false) {
+            const boardElement = document.querySelector('.board');
+            if (!boardElement) return;
+            const rect = boardElement.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const div = document.createElement('div');
+            div.className = 'global-chess-notification';
+            if (isMate) div.classList.add('mate');
+            div.textContent = message;
+            div.style.left = centerX + 'px';
+            div.style.top = centerY + 'px';
+            document.body.appendChild(div);
+            setTimeout(() => { if(div.parentNode) div.remove(); }, 1600);
+        }
+        function initArrowCanvas(){
+            const canvas = document.getElementById('arrowCanvas');
+            if(!canvas) return;
+            arrowCanvas = canvas;
+            ctx = canvas.getContext('2d');
+            canvas.width = 448; canvas.height = 448;
+            drawAllArrows();
+        }
+        function drawAllArrows(){
+            if(!ctx) return;
+            ctx.clearRect(0,0,448,448);
+            const cellSize=56;
+            for(let a of currentArrows){
+                const fromX = a.fromCol*cellSize + cellSize/2;
+                const fromY = a.fromRow*cellSize + cellSize/2;
+                const toX = a.toCol*cellSize + cellSize/2;
+                const toY = a.toRow*cellSize + cellSize/2;
                 ctx.beginPath();
                 ctx.moveTo(fromX, fromY);
                 ctx.lineTo(toX, toY);
                 ctx.strokeStyle = '#2ecc71';
-                ctx.lineWidth=4;
+                ctx.lineWidth = 4;
                 ctx.stroke();
                 const angle = Math.atan2(toY-fromY, toX-fromX);
                 const arrowSize=12;
@@ -741,585 +418,678 @@
                 ctx.moveTo(headX, headY);
                 ctx.lineTo(wingX, wingY);
                 ctx.lineTo(wingX2, wingY2);
+                ctx.fillStyle = '#2ecc71';
                 ctx.fill();
             }
-        });
-        window.addEventListener('mouseup', e=>{
-            if(drawing && start && e.button===2){
+        }
+        function addArrowToCurrent(fromRow,fromCol,toRow,toCol){
+            currentArrows.push({ fromRow, fromCol, toRow, toCol });
+            drawAllArrows();
+        }
+        function clearCurrentArrows(){
+            currentArrows = [];
+            if(ctx) ctx.clearRect(0,0,448,448);
+        }
+        function setupArrowDrawing(){
+            const squares = document.querySelectorAll('.square');
+            let start=null, drawing=false;
+            squares.forEach(sq=>{
+                sq.addEventListener('contextmenu', e=>{ e.preventDefault(); return false; });
+                sq.addEventListener('mousedown', e=>{
+                    if(e.button===2){
+                        e.preventDefault();
+                        start = { row: parseInt(sq.dataset.row), col: parseInt(sq.dataset.col) };
+                        drawing = true;
+                        document.body.style.cursor = 'crosshair';
+                    }
+                });
+            });
+            window.addEventListener('mousemove', e=>{
+                if(!drawing || !start) return;
                 const target = document.elementFromPoint(e.clientX, e.clientY);
                 const tSq = target?.closest('.square');
                 if(tSq){
                     const toRow = parseInt(tSq.dataset.row), toCol = parseInt(tSq.dataset.col);
-                    if(!(toRow===start.row && toCol===start.col)) addArrowToCurrent(start.row, start.col, toRow, toCol);
+                    drawAllArrows();
+                    const fromX = start.col*56+28, fromY = start.row*56+28;
+                    const toX = toCol*56+28, toY = toRow*56+28;
+                    ctx.beginPath();
+                    ctx.moveTo(fromX, fromY);
+                    ctx.lineTo(toX, toY);
+                    ctx.strokeStyle = '#2ecc71';
+                    ctx.lineWidth=4;
+                    ctx.stroke();
+                    const angle = Math.atan2(toY-fromY, toX-fromX);
+                    const arrowSize=12;
+                    const headX=toX, headY=toY;
+                    const wingX = headX - arrowSize*Math.cos(angle-Math.PI/6);
+                    const wingY = headY - arrowSize*Math.sin(angle-Math.PI/6);
+                    const wingX2 = headX - arrowSize*Math.cos(angle+Math.PI/6);
+                    const wingY2 = headY - arrowSize*Math.sin(angle+Math.PI/6);
+                    ctx.beginPath();
+                    ctx.moveTo(headX, headY);
+                    ctx.lineTo(wingX, wingY);
+                    ctx.lineTo(wingX2, wingY2);
+                    ctx.fill();
                 }
-            }
-            drawing=false; start=null;
-            document.body.style.cursor='';
-            drawAllArrows();
-        });
-    }
-    
-    let currentCommentDialog = null;
-    function showCommentDialog(san, callback) {
-        if (currentCommentDialog) currentCommentDialog.remove();
-        const boardRect = document.querySelector('.board-wrapper').getBoundingClientRect();
-        const dialog = document.createElement('div');
-        dialog.className = 'comment-side-dialog';
-        dialog.innerHTML = `
-            <h3>💬 Комментарий к ходу ${san}</h3>
-            <textarea id="commentTextarea" rows="3" placeholder="Напишите пояснение..."></textarea>
-            <div class="comment-side-dialog-buttons">
-                <button id="cancelCommentBtn" style="background:#8b9a8a;">Пропустить</button>
-                <button id="submitCommentBtn">✅ Сохранить</button>
-            </div>
-        `;
-        dialog.style.left = (boardRect.right + 20) + 'px';
-        dialog.style.top = boardRect.top + 'px';
-        document.body.appendChild(dialog);
-        const textarea = dialog.querySelector('#commentTextarea');
-        textarea.focus();
-        const cleanup = () => dialog.remove();
-        dialog.querySelector('#submitCommentBtn').onclick = () => {
-            callback(textarea.value.trim() || "(без комментария)");
-            cleanup();
-            currentCommentDialog = null;
-        };
-        dialog.querySelector('#cancelCommentBtn').onclick = () => {
-            callback("(без комментария)");
-            cleanup();
-            currentCommentDialog = null;
-        };
-        currentCommentDialog = dialog;
-    }
-    
-    let dragStartRow = null, dragStartCol = null;
-    function applyTemporaryMove(fromRow, fromCol, toRow, toCol){
-        if(isMovePending) { alert("Сначала подтвердите или отмените текущий ход"); return false; }
-        if(gameOver) { alert("Партия завершена (мат). Начните новую партию."); return false; }
-        const piece = board[fromRow][fromCol];
-        if(!piece) return false;
-        const expectedColor = currentMoveNumber%2===1 ? "white" : "black";
-        if(piece.color !== expectedColor){ alert(`Сейчас ход ${expectedColor==="white"?"белых":"чёрных"}`); return false; }
-        if(!isValidMove(piece, fromRow, fromCol, toRow, toCol, board)) return false;
-        const oldBoard = JSON.parse(JSON.stringify(board));
-        const oldEnPassant = enPassantTarget;
-        const oldMoveNumber = currentMoveNumber;
-        const oldArrows = [...currentArrows];
-        const newBoard = applyMove({ from: [fromRow, fromCol], to: [toRow, toCol] }, board);
-        const nextColor = expectedColor === "white" ? "black" : "white";
-        const isCheckAfter = isCheck(nextColor, newBoard);
-        const isMateAfter = isCheckAfter && !hasLegalMoves(nextColor, newBoard);
-        const san = getSAN(piece, fromRow, fromCol, toRow, toCol, board, isCheckAfter, isMateAfter);
-        temporaryMove = {
-            from: [fromRow, fromCol], to: [toRow, toCol],
-            piece: piece, san: san,
-            oldBoard, oldEnPassant, oldMoveNumber, arrows: oldArrows,
-            isCheckAfter, isMateAfter
-        };
-        board = newBoard;
-        currentArrows = [];
-        clearCurrentArrows();
-        isMovePending = true;
-        updateGameStatus();
-        renderRecorder();
-        return true;
-    }
-    function commitTemporaryMove(){
-        if(!temporaryMove){ alert("Сначала сделайте ход (перетащите фигуру)"); return; }
-        const finalArrows = [...currentArrows];
-        const san = temporaryMove.san;
-        showCommentDialog(san, (comment)=>{
-            moveHistory.push({
-                san, comment,
-                from: temporaryMove.from, to: temporaryMove.to,
-                piece: temporaryMove.piece.type, color: temporaryMove.piece.color,
-                moveNumber: temporaryMove.oldMoveNumber,
-                arrows: finalArrows,
-                isCheck: temporaryMove.isCheckAfter,
-                isMate: temporaryMove.isMateAfter
             });
-            currentMoveNumber = temporaryMove.oldMoveNumber + 1;
-            temporaryMove = null;
+            window.addEventListener('mouseup', e=>{
+                if(drawing && start && e.button===2){
+                    const target = document.elementFromPoint(e.clientX, e.clientY);
+                    const tSq = target?.closest('.square');
+                    if(tSq){
+                        const toRow = parseInt(tSq.dataset.row), toCol = parseInt(tSq.dataset.col);
+                        if(!(toRow===start.row && toCol===start.col)) addArrowToCurrent(start.row, start.col, toRow, toCol);
+                    }
+                }
+                drawing=false; start=null;
+                document.body.style.cursor='';
+                drawAllArrows();
+            });
+        }
+        function showCommentDialog(san, callback) {
+            if (currentCommentDialog) currentCommentDialog.remove();
+            const boardRect = document.querySelector('.board-wrapper').getBoundingClientRect();
+            const dialog = document.createElement('div');
+            dialog.className = 'comment-side-dialog';
+            dialog.innerHTML = `
+                <h3>💬 Комментарий к ходу ${san}</h3>
+                <textarea id="commentTextarea" rows="3" placeholder="Напишите пояснение..."></textarea>
+                <div class="comment-side-dialog-buttons">
+                    <button id="cancelCommentBtn" style="background:#8b9a8a;">Пропустить</button>
+                    <button id="submitCommentBtn">✅ Сохранить</button>
+                </div>
+            `;
+            dialog.style.left = (boardRect.right + 20) + 'px';
+            dialog.style.top = boardRect.top + 'px';
+            document.body.appendChild(dialog);
+            const textarea = dialog.querySelector('#commentTextarea');
+            textarea.focus();
+            const cleanup = () => dialog.remove();
+            dialog.querySelector('#submitCommentBtn').onclick = () => {
+                callback(textarea.value.trim() || "(без комментария)");
+                cleanup();
+                currentCommentDialog = null;
+            };
+            dialog.querySelector('#cancelCommentBtn').onclick = () => {
+                callback("(без комментария)");
+                cleanup();
+                currentCommentDialog = null;
+            };
+            currentCommentDialog = dialog;
+        }
+        function applyTemporaryMove(fromRow, fromCol, toRow, toCol){
+            if(isMovePending) { alert("Сначала подтвердите или отмените текущий ход"); return false; }
+            if(gameOver) { alert("Партия завершена (мат). Начните новую партию."); return false; }
+            const piece = board[fromRow][fromCol];
+            if(!piece) return false;
+            const expectedColor = currentMoveNumber%2===1 ? "white" : "black";
+            if(piece.color !== expectedColor){ alert(`Сейчас ход ${expectedColor==="white"?"белых":"чёрных"}`); return false; }
+            if(!isValidMove(piece, fromRow, fromCol, toRow, toCol, board)) return false;
+            const oldBoard = JSON.parse(JSON.stringify(board));
+            const oldEnPassant = enPassantTarget;
+            const oldMoveNumber = currentMoveNumber;
+            const oldArrows = [...currentArrows];
+            const newBoard = applyMove({ from: [fromRow, fromCol], to: [toRow, toCol] }, board);
+            const nextColor = expectedColor === "white" ? "black" : "white";
+            const isCheckAfter = isCheck(nextColor, newBoard);
+            const isMateAfter = isCheckAfter && !hasLegalMoves(nextColor, newBoard);
+            const san = getSAN(piece, fromRow, fromCol, toRow, toCol, board, isCheckAfter, isMateAfter);
+            temporaryMove = {
+                from: [fromRow, fromCol], to: [toRow, toCol],
+                piece: piece, san: san,
+                oldBoard, oldEnPassant, oldMoveNumber, arrows: oldArrows,
+                isCheckAfter, isMateAfter
+            };
+            board = newBoard;
             currentArrows = [];
             clearCurrentArrows();
+            isMovePending = true;
+            updateGameStatus();
+            renderRecorder();
+            return true;
+        }
+        function commitTemporaryMove(){
+            if(!temporaryMove){ alert("Сначала сделайте ход (перетащите фигуру)"); return; }
+            const finalArrows = [...currentArrows];
+            const san = temporaryMove.san;
+            showCommentDialog(san, (comment)=>{
+                moveHistory.push({
+                    san, comment,
+                    from: temporaryMove.from, to: temporaryMove.to,
+                    piece: temporaryMove.piece.type, color: temporaryMove.piece.color,
+                    moveNumber: temporaryMove.oldMoveNumber,
+                    arrows: finalArrows,
+                    isCheck: temporaryMove.isCheckAfter,
+                    isMate: temporaryMove.isMateAfter
+                });
+                currentMoveNumber = temporaryMove.oldMoveNumber + 1;
+                temporaryMove = null;
+                currentArrows = [];
+                clearCurrentArrows();
+                isMovePending = false;
+                updateGameStatus();
+                renderRecorder();
+                saveCurrentUserData();
+            });
+        }
+        function undoLastMove(){
+            if(temporaryMove){
+                board = temporaryMove.oldBoard;
+                enPassantTarget = temporaryMove.oldEnPassant;
+                currentMoveNumber = temporaryMove.oldMoveNumber;
+                currentArrows = temporaryMove.arrows;
+                temporaryMove = null;
+                isMovePending = false;
+                gameOver = false;
+                checkStatus = false;
+                checkmateStatus = false;
+                drawAllArrows();
+                renderRecorder();
+                return;
+            }
+            if(moveHistory.length === 0) return;
+            moveHistory.pop();
+            let newBoard = getInitialBoard();
+            let savedEp = enPassantTarget;
+            enPassantTarget = null;
+            for(let m of moveHistory) newBoard = applyMove({ from: m.from, to: m.to }, newBoard);
+            enPassantTarget = savedEp;
+            board = newBoard;
+            currentMoveNumber = moveHistory.length + 1;
+            temporaryMove = null;
             isMovePending = false;
+            currentArrows = [];
+            gameOver = false;
             updateGameStatus();
             renderRecorder();
             saveCurrentUserData();
-        });
-    }
-    function undoLastMove(){
-        if(temporaryMove){
-            board = temporaryMove.oldBoard;
-            enPassantTarget = temporaryMove.oldEnPassant;
-            currentMoveNumber = temporaryMove.oldMoveNumber;
-            currentArrows = temporaryMove.arrows;
-            temporaryMove = null;
-            isMovePending = false;
-            gameOver = false;
-            checkStatus = false;
-            checkmateStatus = false;
-            drawAllArrows();
-            renderRecorder();
-            return;
         }
-        if(moveHistory.length === 0) return;
-        moveHistory.pop();
-        let newBoard = getInitialBoard();
-        let savedEp = enPassantTarget;
-        enPassantTarget = null;
-        for(let m of moveHistory) newBoard = applyMove({ from: m.from, to: m.to }, newBoard);
-        enPassantTarget = savedEp;
-        board = newBoard;
-        currentMoveNumber = moveHistory.length + 1;
-        temporaryMove = null;
-        isMovePending = false;
-        currentArrows = [];
-        gameOver = false;
-        updateGameStatus();
-        renderRecorder();
-        saveCurrentUserData();
-    }
-    function setupDragAndDrop(){
-        const squares = document.querySelectorAll(".square");
-        squares.forEach(sq=>{
-            sq.setAttribute('draggable','true');
-            sq.ondragstart = (e)=>{
-                if(isMovePending){ e.preventDefault(); alert("Сначала подтвердите или отмените текущий ход"); return false; }
-                if(gameOver){ e.preventDefault(); alert("Партия завершена. Начните новую партию."); return false; }
-                let row = parseInt(sq.dataset.row), col = parseInt(sq.dataset.col);
-                let piece = board[row][col];
-                if(!piece){ e.preventDefault(); return false; }
-                let expectedColor = currentMoveNumber%2===1?"white":"black";
-                if(piece.color !== expectedColor){ e.preventDefault(); return false; }
-                dragStartRow = row; dragStartCol = col;
-                e.dataTransfer.setData('text/plain',`${row},${col}`);
-                e.dataTransfer.effectAllowed = 'move';
-                const dragImage = document.createElement('div');
-                dragImage.textContent = getPieceSymbol(piece);
-                dragImage.style.cssText = 'position:fixed; font-size:28px; width:56px; height:56px; display:flex; align-items:center; justify-content:center; background:#2c6e2f; border-radius:50%; color:white';
-                document.body.appendChild(dragImage);
-                e.dataTransfer.setDragImage(dragImage, 28, 28);
-                setTimeout(()=>dragImage.remove(),0);
-                e.target.style.transform = 'scale(1.1)';
-            };
-            sq.ondragend = (e)=>{ e.target.style.transform = ''; dragStartRow=null; dragStartCol=null; };
-            sq.ondragover = (e)=>e.preventDefault();
-            sq.ondrop = (e)=>{
-                e.preventDefault();
-                if(dragStartRow !== null && dragStartCol !== null){
-                    let toRow = parseInt(sq.dataset.row), toCol = parseInt(sq.dataset.col);
-                    applyTemporaryMove(dragStartRow, dragStartCol, toRow, toCol);
-                }
-                dragStartRow=null; dragStartCol=null;
-            };
-        });
-    }
-    
-    function renderRecorder(){
-        const container = document.getElementById("recorderContainer");
-        if(!container) return;
-        const files = ['a','b','c','d','e','f','g','h'];
-        const ranks = ['8','7','6','5','4','3','2','1'];
-        let boardHtml = `<div class="chessboard-with-coords">
-            <div class="board-row-coords">
-                <div class="left-coords">${ranks.map(r=>`<span>${r}</span>`).join('')}</div>
-                <div class="board-wrapper">
-                    <div class="board" style="position:relative;">
-                        ${(()=>{
-                            let html='';
-                            for(let i=0;i<8;i++) for(let j=0;j<8;j++){
-                                let piece=board[i][j];
-                                let isLight=(i+j)%2===0;
-                                html+=`<div class="square ${isLight?'light':'dark'}" data-row="${i}" data-col="${j}" draggable="true">${piece?getPieceSymbol(piece):''}</div>`;
-                            }
-                            return html;
-                        })()}
-                        <canvas id="arrowCanvas" class="arrow-canvas"></canvas>
-                    </div>
-                </div>
-            </div>
-            <div class="bottom-coords">${files.map(f=>`<span>${f}</span>`).join('')}</div>
-        </div>`;
-        let historyHtml = `<div class="history-col"><h3>📜 История партии</h3><div class="history-list">`;
-        for(let m of moveHistory) historyHtml += `<div class="history-item"><div class="history-move">${m.moveNumber}. ${m.san}</div><div class="history-comment">💬 ${escapeHtml(m.comment)}</div></div>`;
-        if(moveHistory.length===0) historyHtml += `<div style="color:#8b9a8a; padding:12px;">Перетащите фигуру → нарисуйте стрелки → нажмите "Подтвердить ход".</div>`;
-        historyHtml += `</div></div>`;
-        let currentColor = currentMoveNumber%2===1 ? "Белые" : "Чёрные";
-        let statusText = `${currentColor}`;
-        if(gameOver && checkmateStatus) statusText = `МАТ! ${currentColor === "Белые" ? "Чёрные" : "Белые"} победили`;
-        else if(checkStatus && !gameOver) statusText += ` — ШАХ!`;
-        container.innerHTML = `
-            <div class="two-columns">
-                <div class="left-col">
-                    <div class="controls-panel">
-                        <div class="turn-indicator">♟️ Ход №${currentMoveNumber} — ${statusText}</div>
-                        <div class="btn-group">
-                            <button id="clearArrowsBtn" class="btn-secondary">🗑️ Очистить стрелки</button>
-                            <button id="cancelLastMoveBtn" class="btn-secondary">↩ Отменить последний</button>
+        function setupDragAndDrop(){
+            const squares = document.querySelectorAll(".square");
+            squares.forEach(sq=>{
+                sq.setAttribute('draggable','true');
+                sq.ondragstart = (e)=>{
+                    if(isMovePending){ e.preventDefault(); alert("Сначала подтвердите или отмените текущий ход"); return false; }
+                    if(gameOver){ e.preventDefault(); alert("Партия завершена. Начните новую партию."); return false; }
+                    let row = parseInt(sq.dataset.row), col = parseInt(sq.dataset.col);
+                    let piece = board[row][col];
+                    if(!piece){ e.preventDefault(); return false; }
+                    let expectedColor = currentMoveNumber%2===1?"white":"black";
+                    if(piece.color !== expectedColor){ e.preventDefault(); return false; }
+                    dragStartRow = row; dragStartCol = col;
+                    e.dataTransfer.setData('text/plain',`${row},${col}`);
+                    e.dataTransfer.effectAllowed = 'move';
+                    const dragImage = document.createElement('div');
+                    dragImage.textContent = getPieceSymbol(piece);
+                    dragImage.style.cssText = 'position:fixed; font-size:28px; width:56px; height:56px; display:flex; align-items:center; justify-content:center; background:#2c6e2f; border-radius:50%; color:white';
+                    document.body.appendChild(dragImage);
+                    e.dataTransfer.setDragImage(dragImage, 28, 28);
+                    setTimeout(()=>dragImage.remove(),0);
+                    e.target.style.transform = 'scale(1.1)';
+                };
+                sq.ondragend = (e)=>{ e.target.style.transform = ''; dragStartRow=null; dragStartCol=null; };
+                sq.ondragover = (e)=>e.preventDefault();
+                sq.ondrop = (e)=>{
+                    e.preventDefault();
+                    if(dragStartRow !== null && dragStartCol !== null){
+                        let toRow = parseInt(sq.dataset.row), toCol = parseInt(sq.dataset.col);
+                        applyTemporaryMove(dragStartRow, dragStartCol, toRow, toCol);
+                    }
+                    dragStartRow=null; dragStartCol=null;
+                };
+            });
+        }
+        function renderRecorder(){
+            const container = document.getElementById("recorderContainer");
+            if(!container) return;
+            const files = ['a','b','c','d','e','f','g','h'];
+            const ranks = ['8','7','6','5','4','3','2','1'];
+            let boardHtml = `<div class="chessboard-with-coords">
+                <div class="board-row-coords">
+                    <div class="left-coords">${ranks.map(r=>`<span>${r}</span>`).join('')}</div>
+                    <div class="board-wrapper">
+                        <div class="board" style="position:relative;">
+                            ${(()=>{
+                                let html='';
+                                for(let i=0;i<8;i++) for(let j=0;j<8;j++){
+                                    let piece=board[i][j];
+                                    let isLight=(i+j)%2===0;
+                                    html+=`<div class="square ${isLight?'light':'dark'}" data-row="${i}" data-col="${j}" draggable="true">${piece?getPieceSymbol(piece):''}</div>`;
+                                }
+                                return html;
+                            })()}
+                            <canvas id="arrowCanvas" class="arrow-canvas"></canvas>
                         </div>
                     </div>
-                    ${boardHtml}
-                    <div class="action-buttons">
-                        <button id="confirmMoveBtn">✅ Подтвердить ход</button>
-                        <button id="saveGameBtn">💾 Сохранить партию</button>
-                    </div>
                 </div>
-                ${historyHtml}
-            </div>
-        `;
-        initArrowCanvas();
-        setupArrowDrawing();
-        setupDragAndDrop();
-        document.getElementById("clearArrowsBtn")?.addEventListener("click",clearCurrentArrows);
-        document.getElementById("cancelLastMoveBtn")?.addEventListener("click",undoLastMove);
-        document.getElementById("confirmMoveBtn")?.addEventListener("click",commitTemporaryMove);
-        document.getElementById("saveGameBtn")?.addEventListener("click",()=>{
-            if(moveHistory.length===0){ alert("Нельзя сохранить пустую партию."); return; }
-            showSaveGameDialog(title=>{
-                let game = {
-                    id: Date.now(), title,
-                    author: currentUserSettings.name, authorAvatar: currentUserSettings.avatar,
-                    date: new Date().toLocaleString(),
-                    moves: moveHistory.map(m=>({...m, arrows: m.arrows||[]})),
-                    moveCount: moveHistory.length
-                };
-                savedGames.unshift(game);
-                saveCurrentUserData();
-                alert("Партия сохранена!");
-                renderCurrentSection();
-            });
-        });
-    }
-    
-    function renderDiscussions(){
-        const container = document.getElementById("discussionsContainer");
-        if(!container) return;
-        let html = `<button id="createPostBtn" style="margin-bottom:16px;">➕ Создать обсуждение</button><div>`;
-        if(!discussionsPosts.length) html += `<div style="padding:30px; text-align:center;">Нет обсуждений</div>`;
-        else discussionsPosts.forEach(p=>{ html+=`<div style="background:white; border-radius:16px; padding:14px; margin-bottom:10px;"><b>${escapeHtml(p.title)}</b><br>${escapeHtml(p.text)}<br><small>${p.author} ${p.date}</small></div>`; });
-        html+=`</div>`;
-        container.innerHTML=html;
-        document.getElementById("createPostBtn")?.addEventListener("click",()=>{ let t=prompt("Заголовок"), txt=prompt("Текст"); if(t&&txt){ discussionsPosts.unshift({ id:genId(), author:currentUserSettings.name, title:t, text:txt, date:new Date().toLocaleString() }); saveCurrentUserData(); renderDiscussions(); } });
-    }
-    function renderFriends(){
-        const container = document.getElementById("friendsContainer");
-        if(!container) return;
-        let html = `<div><input id="newFriend" placeholder="Имя друга" style="padding:8px; border-radius:30px; border:1px solid #ddd; width:60%;"><button id="addFriend" style="margin-left:8px;">➕ Добавить</button></div><div style="margin-top:16px;">`;
-        if(!friendsList.length) html += `<div style="padding:30px; text-align:center;">Нет друзей</div>`;
-        else friendsList.forEach(f=>{ html+=`<div style="background:white; border-radius:16px; padding:12px; margin-bottom:8px;">${escapeHtml(f.name)} <button class="delFriend" data-id="${f.id}" style="float:right; background:#8b3c3c; padding:4px 12px;">Удалить</button></div>`; });
-        html+=`</div>`;
-        container.innerHTML=html;
-        document.getElementById("addFriend")?.addEventListener("click",()=>{ let nm=document.getElementById("newFriend").value.trim(); if(nm){ friendsList.push({ id:genId(), name:nm }); saveCurrentUserData(); renderFriends(); } });
-        document.querySelectorAll(".delFriend").forEach(btn=>btn.addEventListener("click",()=>{ friendsList=friendsList.filter(f=>f.id!==btn.dataset.id); saveCurrentUserData(); renderFriends(); }));
-    }
-    function renderGamesList(){
-        const container = document.getElementById("gamesContainer");
-        if(!container) return;
-        if(savedGames.length === 0){
-            container.innerHTML = `<div style="padding:40px; text-align:center;">📭 Нет сохранённых партий</div>`;
-            return;
-        }
-        let html = `<div class="games-grid">`;
-        savedGames.forEach(game => {
-            html += `
-                <div class="game-card" data-id="${game.id}">
-                    <div class="game-info">
-                        <div class="game-title">${escapeHtml(game.title)}</div>
-                        <div class="game-meta">✍️ ${escapeHtml(game.author)} • ${game.date} • ${game.moveCount} ходов</div>
+                <div class="bottom-coords">${files.map(f=>`<span>${f}</span>`).join('')}</div>
+            </div>`;
+            let historyHtml = `<div class="history-col"><h3>📜 История партии</h3><div class="history-list">`;
+            for(let m of moveHistory) historyHtml += `<div class="history-item"><div class="history-move">${m.moveNumber}. ${m.san}</div><div class="history-comment">💬 ${escapeHtml(m.comment)}</div></div>`;
+            if(moveHistory.length===0) historyHtml += `<div style="color:#8b9a8a; padding:12px;">Перетащите фигуру → нарисуйте стрелки → нажмите "Подтвердить ход".</div>`;
+            historyHtml += `</div></div>`;
+            let currentColor = currentMoveNumber%2===1 ? "Белые" : "Чёрные";
+            let statusText = `${currentColor}`;
+            if(gameOver && checkmateStatus) statusText = `МАТ! ${currentColor === "Белые" ? "Чёрные" : "Белые"} победили`;
+            else if(checkStatus && !gameOver) statusText += ` — ШАХ!`;
+            container.innerHTML = `
+                <div class="two-columns">
+                    <div class="left-col">
+                        <div class="controls-panel">
+                            <div class="turn-indicator">♟️ Ход №${currentMoveNumber} — ${statusText}</div>
+                            <div class="btn-group">
+                                <button id="clearArrowsBtn" class="btn-secondary">🗑️ Очистить стрелки</button>
+                                <button id="cancelLastMoveBtn" class="btn-secondary">↩ Отменить последний</button>
+                            </div>
+                        </div>
+                        ${boardHtml}
+                        <div class="action-buttons">
+                            <button id="confirmMoveBtn">✅ Подтвердить ход</button>
+                            <button id="saveGameBtn">💾 Сохранить партию</button>
+                        </div>
                     </div>
-                    <button class="delete-game-btn" data-id="${game.id}">🗑️ Удалить</button>
+                    ${historyHtml}
                 </div>
             `;
-        });
-        html += `</div>`;
-        container.innerHTML = html;
-        document.querySelectorAll(".game-info").forEach(info => {
-            info.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const card = info.closest('.game-card');
-                const id = parseInt(card.dataset.id);
-                const game = savedGames.find(g => g.id === id);
-                if(game) openGameReplay(game);
-            });
-        });
-        document.querySelectorAll(".delete-game-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                e.stopPropagation();
-                const id = parseInt(btn.dataset.id);
-                if(confirm("Вы уверены, что хотите удалить эту партию?")){
-                    savedGames = savedGames.filter(g => g.id !== id);
+            initArrowCanvas();
+            setupArrowDrawing();
+            setupDragAndDrop();
+            document.getElementById("clearArrowsBtn")?.addEventListener("click",clearCurrentArrows);
+            document.getElementById("cancelLastMoveBtn")?.addEventListener("click",undoLastMove);
+            document.getElementById("confirmMoveBtn")?.addEventListener("click",commitTemporaryMove);
+            document.getElementById("saveGameBtn")?.addEventListener("click",()=>{
+                if(moveHistory.length===0){ alert("Нельзя сохранить пустую партию."); return; }
+                showSaveGameDialog(title=>{
+                    let game = {
+                        id: Date.now(), title,
+                        author: currentUserSettings.name, authorAvatar: currentUserSettings.avatar,
+                        date: new Date().toLocaleString(),
+                        moves: moveHistory.map(m=>({...m, arrows: m.arrows||[]})),
+                        moveCount: moveHistory.length
+                    };
+                    savedGames.unshift(game);
                     saveCurrentUserData();
-                    renderGamesList();
-                }
+                    alert("Партия сохранена!");
+                    renderCurrentSection();
+                });
             });
-        });
-    }
-    
-    let currentReplayGame=null, currentReplayIndex=0;
-    function buildBoardFromMoves(movesUpTo){
-        let b=getInitialBoard();
-        let savedEp=enPassantTarget;
-        enPassantTarget=null;
-        for(let i=0;i<movesUpTo;i++){
-            let m=currentReplayGame.moves[i];
-            b=applyMove({ from:m.from, to:m.to }, b);
         }
-        enPassantTarget=savedEp;
-        return b;
-    }
-    function drawReplayArrows(arrowsArray){
-        const boardContainer = document.getElementById("replayBoardContainer");
-        if(!boardContainer) return;
-        let oldCanvas = boardContainer.querySelector('.replay-arrow-canvas');
-        if(oldCanvas) oldCanvas.remove();
-        const wrapper = boardContainer.querySelector('.board-wrapper');
-        if(!wrapper) return;
-        const canvas = document.createElement('canvas');
-        canvas.className='replay-arrow-canvas';
-        canvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none';
-        canvas.width=448; canvas.height=448;
-        wrapper.style.position='relative';
-        wrapper.appendChild(canvas);
-        const cctx = canvas.getContext('2d');
-        cctx.clearRect(0,0,448,448);
-        const cellSize=56;
-        for(let a of arrowsArray){
-            const fromX = a.fromCol*cellSize+cellSize/2;
-            const fromY = a.fromRow*cellSize+cellSize/2;
-            const toX = a.toCol*cellSize+cellSize/2;
-            const toY = a.toRow*cellSize+cellSize/2;
-            cctx.beginPath();
-            cctx.moveTo(fromX, fromY);
-            cctx.lineTo(toX, toY);
-            cctx.strokeStyle = '#2ecc71';
-            cctx.lineWidth=4;
-            cctx.stroke();
-            const angle = Math.atan2(toY-fromY, toX-fromX);
-            const arrowSize=12;
-            const headX=toX, headY=toY;
-            const wingX = headX - arrowSize*Math.cos(angle-Math.PI/6);
-            const wingY = headY - arrowSize*Math.sin(angle-Math.PI/6);
-            const wingX2 = headX - arrowSize*Math.cos(angle+Math.PI/6);
-            const wingY2 = headY - arrowSize*Math.sin(angle+Math.PI/6);
-            cctx.beginPath();
-            cctx.moveTo(headX, headY);
-            cctx.lineTo(wingX, wingY);
-            cctx.lineTo(wingX2, wingY2);
-            cctx.fillStyle = '#2ecc71';
-            cctx.fill();
+        function renderDiscussions(){
+            const container = document.getElementById("discussionsContainer");
+            if(!container) return;
+            let html = `<button id="createPostBtn" style="margin-bottom:16px;">➕ Создать обсуждение</button><div>`;
+            if(!discussionsPosts.length) html += `<div style="padding:30px; text-align:center;">Нет обсуждений</div>`;
+            else discussionsPosts.forEach(p=>{ html+=`<div style="background:white; border-radius:16px; padding:14px; margin-bottom:10px;"><b>${escapeHtml(p.title)}</b><br>${escapeHtml(p.text)}<br><small>${p.author} ${p.date}</small></div>`; });
+            html+=`</div>`;
+            container.innerHTML=html;
+            document.getElementById("createPostBtn")?.addEventListener("click",()=>{ let t=prompt("Заголовок"), txt=prompt("Текст"); if(t&&txt){ discussionsPosts.unshift({ id:genId(), author:currentUserSettings.name, title:t, text:txt, date:new Date().toLocaleString() }); saveCurrentUserData(); renderDiscussions(); } });
         }
-    }
-    function renderReplayBoard(){
-        const boardContainer = document.getElementById("replayBoardContainer");
-        const historyContainer = document.getElementById("replayHistoryContainer");
-        if(!boardContainer) return;
-        let b = buildBoardFromMoves(currentReplayIndex);
-        const files=['a','b','c','d','e','f','g','h'], ranks=['8','7','6','5','4','3','2','1'];
-        let boardHtml = `<div class="chessboard-with-coords"><div class="board-row-coords"><div class="left-coords" style="height:448px;">${ranks.map(r=>`<span style="height:56px;">${r}</span>`).join('')}</div><div class="board-wrapper"><div class="board" style="width:448px;height:448px; position:relative;">`;
-        for(let i=0;i<8;i++) for(let j=0;j<8;j++){
-            let piece=b[i][j];
-            let isLight=(i+j)%2===0;
-            boardHtml += `<div class="square ${isLight?'light':'dark'}" style="cursor:default;">${piece?getPieceSymbol(piece):''}</div>`;
+        function renderFriends(){
+            const container = document.getElementById("friendsContainer");
+            if(!container) return;
+            let html = `<div><input id="newFriend" placeholder="Имя друга" style="padding:8px; border-radius:30px; border:1px solid #ddd; width:60%;"><button id="addFriend" style="margin-left:8px;">➕ Добавить</button></div><div style="margin-top:16px;">`;
+            if(!friendsList.length) html += `<div style="padding:30px; text-align:center;">Нет друзей</div>`;
+            else friendsList.forEach(f=>{ html+=`<div style="background:white; border-radius:16px; padding:12px; margin-bottom:8px;">${escapeHtml(f.name)} <button class="delFriend" data-id="${f.id}" style="float:right; background:#8b3c3c; padding:4px 12px;">Удалить</button></div>`; });
+            html+=`</div>`;
+            container.innerHTML=html;
+            document.getElementById("addFriend")?.addEventListener("click",()=>{ let nm=document.getElementById("newFriend").value.trim(); if(nm){ friendsList.push({ id:genId(), name:nm }); saveCurrentUserData(); renderFriends(); } });
+            document.querySelectorAll(".delFriend").forEach(btn=>btn.addEventListener("click",()=>{ friendsList=friendsList.filter(f=>f.id!==btn.dataset.id); saveCurrentUserData(); renderFriends(); }));
         }
-        boardHtml += `</div></div></div><div class="bottom-coords" style="width:448px;margin-left:26px;">${files.map(f=>`<span style="width:56px;">${f}</span>`).join('')}</div></div>`;
-        boardContainer.innerHTML = boardHtml;
-        if(currentReplayIndex>0 && currentReplayGame.moves[currentReplayIndex-1].arrows) drawReplayArrows(currentReplayGame.moves[currentReplayIndex-1].arrows);
-        let movesHtml = `<h4>📋 Ходы и комментарии</h4>`;
-        currentReplayGame.moves.forEach((m,idx)=>{
-            let active = (idx===currentReplayIndex-1)?'active':'';
-            let long = m.comment && m.comment.length>50;
-            let cid = `comm-${idx}`;
-            movesHtml += `<div class="replay-move-item ${active}" data-moveidx="${idx+1}"><div class="replay-move-san">${m.moveNumber}. ${m.san}</div><div class="replay-move-comment" id="${cid}">💬 ${escapeHtml(m.comment)}</div>${long?`<div class="comment-expand-hint" data-comment="${cid}">🔽 развернуть</div>`:''}</div>`;
-        });
-        historyContainer.innerHTML = movesHtml;
-        const toggle = (el, hint) => {
-            if(el.classList.contains('expanded')){ el.classList.remove('expanded'); if(hint) hint.textContent='🔽 развернуть'; }
-            else { el.classList.add('expanded'); if(hint) hint.textContent='🔼 свернуть'; }
-        };
-        document.querySelectorAll('.replay-move-comment').forEach(c=>{
-            c.addEventListener('click',e=>{
-                e.stopPropagation();
-                let parent = c.parentElement;
-                let hint = parent.querySelector('.comment-expand-hint');
-                toggle(c, hint);
+        function renderGamesList(){
+            const container = document.getElementById("gamesContainer");
+            if(!container) return;
+            if(savedGames.length === 0){
+                container.innerHTML = `<div style="padding:40px; text-align:center;">📭 Нет сохранённых партий</div>`;
+                return;
+            }
+            let html = `<div class="games-grid">`;
+            savedGames.forEach(game => {
+                html += `
+                    <div class="game-card" data-id="${game.id}">
+                        <div class="game-info">
+                            <div class="game-title">${escapeHtml(game.title)}</div>
+                            <div class="game-meta">✍️ ${escapeHtml(game.author)} • ${game.date} • ${game.moveCount} ходов</div>
+                        </div>
+                        <button class="delete-game-btn" data-id="${game.id}">🗑️ Удалить</button>
+                    </div>
+                `;
             });
-        });
-        document.querySelectorAll('.comment-expand-hint').forEach(h=>{
-            h.addEventListener('click',e=>{
-                e.stopPropagation();
-                let cid = h.dataset.comment;
-                let comm = document.getElementById(cid);
-                if(comm) toggle(comm, h);
+            html += `</div>`;
+            container.innerHTML = html;
+            document.querySelectorAll(".game-info").forEach(info => {
+                info.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const card = info.closest('.game-card');
+                    const id = parseInt(card.dataset.id);
+                    const game = savedGames.find(g => g.id === id);
+                    if(game) openGameReplay(game);
+                });
             });
-        });
-        document.querySelectorAll('.replay-move-item').forEach(el=>{
-            el.addEventListener('click',e=>{
-                if(e.target.classList.contains('replay-move-comment') || e.target.classList.contains('comment-expand-hint')) return;
-                let newIdx = parseInt(el.dataset.moveidx);
-                if(!isNaN(newIdx)){ currentReplayIndex=newIdx; renderReplayBoard(); }
+            document.querySelectorAll(".delete-game-btn").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const id = parseInt(btn.dataset.id);
+                    if(confirm("Вы уверены, что хотите удалить эту партию?")){
+                        savedGames = savedGames.filter(g => g.id !== id);
+                        saveCurrentUserData();
+                        renderGamesList();
+                    }
+                });
             });
-        });
-        if(currentReplayIndex>0){
-            let curComm = document.getElementById(`comm-${currentReplayIndex-1}`);
-            let parent = curComm?.parentElement;
-            let hint = parent?.querySelector('.comment-expand-hint');
-            if(curComm && !curComm.classList.contains('expanded')){ curComm.classList.add('expanded'); if(hint) hint.textContent='🔼 свернуть'; }
         }
-        setTimeout(()=>{ let act = document.querySelector('.replay-move-item.active'); if(act) act.scrollIntoView({ behavior:'smooth', block:'nearest' }); },50);
-    }
-    function openGameReplay(game){
-        currentReplayGame=game; currentReplayIndex=game.moves.length;
-        document.getElementById("modalTitle").innerHTML = `${escapeHtml(game.title)} <span style="font-size:0.7rem;">(автор: ${escapeHtml(game.author)})</span>`;
-        renderReplayBoard();
-        document.getElementById("gameModal").style.display="flex";
-    }
-    
-    let currentSection = "recorder";
-    function renderCurrentSection(){
-        const title=document.getElementById("sectionTitle");
-        const panel=document.getElementById("contentPanel");
-        if(currentSection==="recorder"){
-            title.innerText="Запись партии";
-            panel.innerHTML=`<div id="recorderContainer" style="height:100%;"></div>`;
-            resetGameState();
-            renderRecorder();
-        } else if(currentSection==="games"){
-            title.innerText="Мои партии";
-            panel.innerHTML=`<div id="gamesContainer"></div>`;
-            renderGamesList();
-        } else if(currentSection==="discussions"){
-            title.innerText="Обсуждения";
-            panel.innerHTML=`<div id="discussionsContainer"></div>`;
-            renderDiscussions();
-        } else if(currentSection==="friends"){
-            title.innerText="Друзья";
-            panel.innerHTML=`<div id="friendsContainer"></div>`;
-            renderFriends();
+        let currentReplayGame=null, currentReplayIndex=0;
+        function buildBoardFromMoves(movesUpTo){
+            let b=getInitialBoard();
+            let savedEp=enPassantTarget;
+            enPassantTarget=null;
+            for(let i=0;i<movesUpTo;i++){
+                let m=currentReplayGame.moves[i];
+                b=applyMove({ from:m.from, to:m.to }, b);
+            }
+            enPassantTarget=savedEp;
+            return b;
         }
-    }
-    function setActiveSection(section){
-        currentSection=section;
-        document.querySelectorAll(".nav-btn").forEach(btn=>{ if(btn.dataset.section===section) btn.classList.add("active"); else btn.classList.remove("active"); });
-        renderCurrentSection();
-    }
-    
-    function openProfile(){
-        const modal = document.getElementById("profileModal");
-        if(!modal) return;
-        document.getElementById("profileNameInput").value = currentUserSettings.name;
-        document.getElementById("modalAvatar").innerHTML = currentUserSettings.avatar;
-        let grid = document.getElementById("avatarGrid");
-        grid.innerHTML = "";
-        const avatars = ["♙", "♘", "♗", "♖", "♕", "♔", "♟️", "♞", "♝", "♜", "♛", "♚"];
-        avatars.forEach(av => {
-            let div = document.createElement("div");
-            div.className = "avatar-option";
-            if(av === currentUserSettings.avatar) div.classList.add("selected");
-            div.innerHTML = av;
-            div.onclick = () => {
-                document.querySelectorAll("#avatarGrid .avatar-option").forEach(a => a.classList.remove("selected"));
-                div.classList.add("selected");
-                document.getElementById("modalAvatar").innerHTML = av;
+        function drawReplayArrows(arrowsArray){
+            const boardContainer = document.getElementById("replayBoardContainer");
+            if(!boardContainer) return;
+            let oldCanvas = boardContainer.querySelector('.replay-arrow-canvas');
+            if(oldCanvas) oldCanvas.remove();
+            const wrapper = boardContainer.querySelector('.board-wrapper');
+            if(!wrapper) return;
+            const canvas = document.createElement('canvas');
+            canvas.className='replay-arrow-canvas';
+            canvas.style.cssText = 'position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none';
+            canvas.width=448; canvas.height=448;
+            wrapper.style.position='relative';
+            wrapper.appendChild(canvas);
+            const cctx = canvas.getContext('2d');
+            cctx.clearRect(0,0,448,448);
+            const cellSize=56;
+            for(let a of arrowsArray){
+                const fromX = a.fromCol*cellSize+cellSize/2;
+                const fromY = a.fromRow*cellSize+cellSize/2;
+                const toX = a.toCol*cellSize+cellSize/2;
+                const toY = a.toRow*cellSize+cellSize/2;
+                cctx.beginPath();
+                cctx.moveTo(fromX, fromY);
+                cctx.lineTo(toX, toY);
+                cctx.strokeStyle = '#2ecc71';
+                cctx.lineWidth=4;
+                cctx.stroke();
+                const angle = Math.atan2(toY-fromY, toX-fromX);
+                const arrowSize=12;
+                const headX=toX, headY=toY;
+                const wingX = headX - arrowSize*Math.cos(angle-Math.PI/6);
+                const wingY = headY - arrowSize*Math.sin(angle-Math.PI/6);
+                const wingX2 = headX - arrowSize*Math.cos(angle+Math.PI/6);
+                const wingY2 = headY - arrowSize*Math.sin(angle+Math.PI/6);
+                cctx.beginPath();
+                cctx.moveTo(headX, headY);
+                cctx.lineTo(wingX, wingY);
+                cctx.lineTo(wingX2, wingY2);
+                cctx.fillStyle = '#2ecc71';
+                cctx.fill();
+            }
+        }
+        function renderReplayBoard(){
+            const boardContainer = document.getElementById("replayBoardContainer");
+            const historyContainer = document.getElementById("replayHistoryContainer");
+            if(!boardContainer) return;
+            let b = buildBoardFromMoves(currentReplayIndex);
+            const files=['a','b','c','d','e','f','g','h'], ranks=['8','7','6','5','4','3','2','1'];
+            let boardHtml = `<div class="chessboard-with-coords"><div class="board-row-coords"><div class="left-coords" style="height:448px;">${ranks.map(r=>`<span style="height:56px;">${r}</span>`).join('')}</div><div class="board-wrapper"><div class="board" style="width:448px;height:448px; position:relative;">`;
+            for(let i=0;i<8;i++) for(let j=0;j<8;j++){
+                let piece=b[i][j];
+                let isLight=(i+j)%2===0;
+                boardHtml += `<div class="square ${isLight?'light':'dark'}" style="cursor:default;">${piece?getPieceSymbol(piece):''}</div>`;
+            }
+            boardHtml += `</div></div></div><div class="bottom-coords" style="width:448px;margin-left:26px;">${files.map(f=>`<span style="width:56px;">${f}</span>`).join('')}</div></div>`;
+            boardContainer.innerHTML = boardHtml;
+            if(currentReplayIndex>0 && currentReplayGame.moves[currentReplayIndex-1].arrows) drawReplayArrows(currentReplayGame.moves[currentReplayIndex-1].arrows);
+            let movesHtml = `<h4>📋 Ходы и комментарии</h4>`;
+            currentReplayGame.moves.forEach((m,idx)=>{
+                let active = (idx===currentReplayIndex-1)?'active':'';
+                let long = m.comment && m.comment.length>50;
+                let cid = `comm-${idx}`;
+                movesHtml += `<div class="replay-move-item ${active}" data-moveidx="${idx+1}"><div class="replay-move-san">${m.moveNumber}. ${m.san}</div><div class="replay-move-comment" id="${cid}">💬 ${escapeHtml(m.comment)}</div>${long?`<div class="comment-expand-hint" data-comment="${cid}">🔽 развернуть</div>`:''}</div>`;
+            });
+            historyContainer.innerHTML = movesHtml;
+            const toggle = (el, hint) => {
+                if(el.classList.contains('expanded')){ el.classList.remove('expanded'); if(hint) hint.textContent='🔽 развернуть'; }
+                else { el.classList.add('expanded'); if(hint) hint.textContent='🔼 свернуть'; }
             };
-            grid.appendChild(div);
+            document.querySelectorAll('.replay-move-comment').forEach(c=>{
+                c.addEventListener('click',e=>{
+                    e.stopPropagation();
+                    let parent = c.parentElement;
+                    let hint = parent.querySelector('.comment-expand-hint');
+                    toggle(c, hint);
+                });
+            });
+            document.querySelectorAll('.comment-expand-hint').forEach(h=>{
+                h.addEventListener('click',e=>{
+                    e.stopPropagation();
+                    let cid = h.dataset.comment;
+                    let comm = document.getElementById(cid);
+                    if(comm) toggle(comm, h);
+                });
+            });
+            document.querySelectorAll('.replay-move-item').forEach(el=>{
+                el.addEventListener('click',e=>{
+                    if(e.target.classList.contains('replay-move-comment') || e.target.classList.contains('comment-expand-hint')) return;
+                    let newIdx = parseInt(el.dataset.moveidx);
+                    if(!isNaN(newIdx)){ currentReplayIndex=newIdx; renderReplayBoard(); }
+                });
+            });
+            if(currentReplayIndex>0){
+                let curComm = document.getElementById(`comm-${currentReplayIndex-1}`);
+                let parent = curComm?.parentElement;
+                let hint = parent?.querySelector('.comment-expand-hint');
+                if(curComm && !curComm.classList.contains('expanded')){ curComm.classList.add('expanded'); if(hint) hint.textContent='🔼 свернуть'; }
+            }
+            setTimeout(()=>{ let act = document.querySelector('.replay-move-item.active'); if(act) act.scrollIntoView({ behavior:'smooth', block:'nearest' }); },50);
+        }
+        function openGameReplay(game){
+            currentReplayGame=game; currentReplayIndex=game.moves.length;
+            document.getElementById("modalTitle").innerHTML = `${escapeHtml(game.title)} <span style="font-size:0.7rem;">(автор: ${escapeHtml(game.author)})</span>`;
+            renderReplayBoard();
+            document.getElementById("gameModal").style.display="flex";
+        }
+        let currentSection = "recorder";
+        function renderCurrentSection(){
+            const title=document.getElementById("sectionTitle");
+            const panel=document.getElementById("contentPanel");
+            if(currentSection==="recorder"){
+                title.innerText="Запись партии";
+                panel.innerHTML=`<div id="recorderContainer" style="height:100%;"></div>`;
+                resetGameState();
+                renderRecorder();
+            } else if(currentSection==="games"){
+                title.innerText="Мои партии";
+                panel.innerHTML=`<div id="gamesContainer"></div>`;
+                renderGamesList();
+            } else if(currentSection==="discussions"){
+                title.innerText="Обсуждения";
+                panel.innerHTML=`<div id="discussionsContainer"></div>`;
+                renderDiscussions();
+            } else if(currentSection==="friends"){
+                title.innerText="Друзья";
+                panel.innerHTML=`<div id="friendsContainer"></div>`;
+                renderFriends();
+            }
+        }
+        function setActiveSection(section){
+            currentSection=section;
+            document.querySelectorAll(".nav-btn").forEach(btn=>{ if(btn.dataset.section===section) btn.classList.add("active"); else btn.classList.remove("active"); });
+            renderCurrentSection();
+        }
+        // ---------- Работа с Realtime Database ----------
+        async function loadUserDataFromRTDB() {
+            if (!currentUser) return;
+            const userRef = database.ref(`users/${currentUserId}`);
+            const snapshot = await userRef.once('value');
+            const data = snapshot.val();
+            if (data) {
+                savedGames = data.games || [];
+                discussionsPosts = data.discussions || [];
+                friendsList = data.friends || [];
+                currentUserSettings.name = data.name || currentUser.email.split('@')[0];
+                currentUserSettings.avatar = data.avatar || "♙";
+            } else {
+                savedGames = [];
+                discussionsPosts = [];
+                friendsList = [];
+                currentUserSettings.name = currentUser.email.split('@')[0];
+                currentUserSettings.avatar = "♙";
+                await userRef.set({
+                    name: currentUserSettings.name,
+                    avatar: currentUserSettings.avatar,
+                    games: [],
+                    discussions: [],
+                    friends: []
+                });
+            }
+            document.getElementById("headerName").innerText = currentUserSettings.name;
+            document.getElementById("headerAvatar").innerHTML = currentUserSettings.avatar;
+        }
+        async function saveCurrentUserData() {
+            if (!currentUser) return;
+            const userRef = database.ref(`users/${currentUserId}`);
+            await userRef.update({
+                name: currentUserSettings.name,
+                avatar: currentUserSettings.avatar,
+                games: savedGames,
+                discussions: discussionsPosts,
+                friends: friendsList
+            });
+        }
+        function openProfile(){
+            const modal = document.getElementById("profileModal");
+            if(!modal) return;
+            document.getElementById("profileNameInput").value = currentUserSettings.name;
+            document.getElementById("modalAvatar").innerHTML = currentUserSettings.avatar;
+            let grid = document.getElementById("avatarGrid");
+            grid.innerHTML = "";
+            const avatars = ["♙", "♘", "♗", "♖", "♕", "♔", "♟️", "♞", "♝", "♜", "♛", "♚"];
+            avatars.forEach(av => {
+                let div = document.createElement("div");
+                div.className = "avatar-option";
+                if(av === currentUserSettings.avatar) div.classList.add("selected");
+                div.innerHTML = av;
+                div.onclick = () => {
+                    document.querySelectorAll("#avatarGrid .avatar-option").forEach(a => a.classList.remove("selected"));
+                    div.classList.add("selected");
+                    document.getElementById("modalAvatar").innerHTML = av;
+                };
+                grid.appendChild(div);
+            });
+            modal.style.display = "flex";
+        }
+        function closeProfile(){ document.getElementById("profileModal").style.display = "none"; }
+        function saveProfile(){
+            let newName = document.getElementById("profileNameInput").value.trim();
+            if(newName) currentUserSettings.name = newName;
+            currentUserSettings.avatar = document.getElementById("modalAvatar").innerHTML;
+            document.getElementById("headerName").innerText = currentUserSettings.name;
+            document.getElementById("headerAvatar").innerHTML = currentUserSettings.avatar;
+            saveCurrentUserData();
+            closeProfile();
+            renderCurrentSection();
+        }
+        function logout(){
+            if(confirm("Вы уверены, что хотите выйти?")){
+                auth.signOut().then(() => {
+                    currentUser = null;
+                    currentUserId = null;
+                    document.getElementById("mainApp").style.display = "none";
+                    document.getElementById("authModal").style.display = "flex";
+                });
+            }
+        }
+        async function initAppAfterLogin() {
+            await loadUserDataFromRTDB();
+            resetGameState();
+            document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>setActiveSection(btn.dataset.section)));
+            document.getElementById("profileBtn").addEventListener("click",openProfile);
+            document.getElementById("saveProfileBtn").addEventListener("click",saveProfile);
+            document.getElementById("closeProfileModalBtn").addEventListener("click",closeProfile);
+            document.getElementById("logoutBtn").addEventListener("click",logout);
+            setActiveSection("recorder");
+        }
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                currentUserId = user.uid;
+                document.getElementById("authModal").style.display = "none";
+                document.getElementById("mainApp").style.display = "block";
+                await initAppAfterLogin();
+            } else {
+                document.getElementById("mainApp").style.display = "none";
+                document.getElementById("authModal").style.display = "flex";
+            }
         });
-        modal.style.display = "flex";
-    }
-    function closeProfile(){ document.getElementById("profileModal").style.display = "none"; }
-    function saveProfile(){
-        let newName = document.getElementById("profileNameInput").value.trim();
-        if(newName) currentUserSettings.name = newName;
-        currentUserSettings.avatar = document.getElementById("modalAvatar").innerHTML;
-        currentUser.name = currentUserSettings.name;
-        currentUser.avatar = currentUserSettings.avatar;
-        saveCurrentUserData();
-        document.getElementById("headerName").innerText = currentUserSettings.name;
-        document.getElementById("headerAvatar").innerHTML = currentUserSettings.avatar;
-        closeProfile();
-        renderCurrentSection();
-    }
-    function logout(){
-        if(confirm("Вы уверены, что хотите выйти из аккаунта?")){
-            currentUser = null;
-            document.getElementById("mainApp").style.display = "none";
-            document.getElementById("authModal").style.display = "flex";
-            // очищаем поля ввода
-            document.getElementById("loginEmail").value = "";
-            document.getElementById("loginPassword").value = "";
-            document.getElementById("regEmail").value = "";
-            document.getElementById("regName").value = "";
-            document.getElementById("regPassword").value = "";
-        }
-    }
-    
-    function initAppAfterLogin(){
-        resetGameState();
-        document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>setActiveSection(btn.dataset.section)));
-        document.getElementById("profileBtn").addEventListener("click",openProfile);
-        document.getElementById("saveProfileBtn").addEventListener("click",saveProfile);
-        document.getElementById("closeProfileModalBtn").addEventListener("click",closeProfile);
-        document.getElementById("logoutBtn").addEventListener("click",logout);
-        setActiveSection("recorder");
-    }
-    
-    // Обработчики входа/регистрации
-    const authModal = document.getElementById("authModal");
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const loginTab = document.querySelector("[data-tab='login']");
-    const registerTab = document.querySelector("[data-tab='register']");
-    loginTab.addEventListener("click", () => {
-        loginTab.classList.add("active");
-        registerTab.classList.remove("active");
-        loginForm.style.display = "block";
-        registerForm.style.display = "none";
-    });
-    registerTab.addEventListener("click", () => {
-        registerTab.classList.add("active");
-        loginTab.classList.remove("active");
-        loginForm.style.display = "none";
-        registerForm.style.display = "block";
-    });
-    document.getElementById("loginBtn").addEventListener("click", () => {
-        const email = document.getElementById("loginEmail").value.trim();
-        const password = document.getElementById("loginPassword").value.trim();
-        const errorDiv = document.getElementById("loginError");
-        errorDiv.textContent = "";
-        if (!email || !password) { errorDiv.textContent = "Заполните все поля"; return; }
-        const result = loginUser(email, password);
-        if (!result.success) { errorDiv.textContent = result.error; }
-        else {
-            currentUser = result.user;
-            loadUserData();
-            authModal.style.display = "none";
-            document.getElementById("mainApp").style.display = "block";
-            initAppAfterLogin();
-        }
-    });
-    document.getElementById("registerBtn").addEventListener("click", () => {
-        const email = document.getElementById("regEmail").value.trim();
-        const name = document.getElementById("regName").value.trim();
-        const password = document.getElementById("regPassword").value.trim();
-        const errorDiv = document.getElementById("registerError");
-        errorDiv.textContent = "";
-        if (!email || !name || !password) { errorDiv.textContent = "Заполните все поля"; return; }
-        if (!email.includes("@")) { errorDiv.textContent = "Введите корректный email"; return; }
-        const result = registerUser(email, name, password);
-        if (!result.success) { errorDiv.textContent = result.error; }
-        else {
-            currentUser = result.user;
-            loadUserData();
-            authModal.style.display = "none";
-            document.getElementById("mainApp").style.display = "block";
-            initAppAfterLogin();
-        }
-    });
-    
-    function genId(){ return Date.now()+'-'+Math.random().toString(36).substring(2,8); }
-    function escapeHtml(str){ if(!str) return ""; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
-    
-    // Предзагрузка: если есть сохранённая сессия (можно добавить автоматический вход по email, но для простоты оставляем так)
-</script>
+        const loginTab = document.querySelector("[data-tab='login']");
+        const registerTab = document.querySelector("[data-tab='register']");
+        const loginFormDiv = document.getElementById("loginForm");
+        const registerFormDiv = document.getElementById("registerForm");
+        loginTab.addEventListener("click", () => {
+            loginTab.classList.add("active");
+            registerTab.classList.remove("active");
+            loginFormDiv.style.display = "block";
+            registerFormDiv.style.display = "none";
+        });
+        registerTab.addEventListener("click", () => {
+            registerTab.classList.add("active");
+            loginTab.classList.remove("active");
+            loginFormDiv.style.display = "none";
+            registerFormDiv.style.display = "block";
+        });
+        document.getElementById("loginBtn").addEventListener("click", async () => {
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = document.getElementById("loginPassword").value.trim();
+            const errorDiv = document.getElementById("loginError");
+            errorDiv.textContent = "";
+            if (!email || !password) { errorDiv.textContent = "Заполните все поля"; return; }
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (err) {
+                errorDiv.textContent = err.message;
+            }
+        });
+        document.getElementById("registerBtn").addEventListener("click", async () => {
+            const email = document.getElementById("regEmail").value.trim();
+            const name = document.getElementById("regName").value.trim();
+            const password = document.getElementById("regPassword").value.trim();
+            const errorDiv = document.getElementById("registerError");
+            errorDiv.textContent = "";
+            if (!email || !name || !password) { errorDiv.textContent = "Заполните все поля"; return; }
+            if (!email.includes("@")) { errorDiv.textContent = "Введите корректный email"; return; }
+            try {
+                const cred = await auth.createUserWithEmailAndPassword(email, password);
+                // создаём запись в базе данных
+                const userRef = database.ref(`users/${cred.user.uid}`);
+                await userRef.set({
+                    name: name,
+                    avatar: "♙",
+                    games: [],
+                    discussions: [],
+                    friends: []
+                });
+            } catch (err) {
+                errorDiv.textContent = err.message;
+            }
+        });
+        function genId(){ return Date.now()+'-'+Math.random().toString(36).substring(2,8); }
+        function escapeHtml(str){ if(!str) return ""; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
+        const gameModalDiv = document.createElement('div');
+        gameModalDiv.id = "gameModal";
+        gameModalDiv.className = "modal";
+        gameModalDiv.innerHTML = `<div class="modal-card"><div class="modal-header"><span class="modal-title" id="modalTitle">Партия</span><button id="closeModalBtn" style="background:#8b9a8a;">Закрыть</button></div><div class="replay-layout"><div class="replay-board" id="replayBoardContainer"></div><div class="replay-history" id="replayHistoryContainer"></div></div><div class="replay-nav"><button id="prevMoveBtn">◀ Предыдущий</button><button id="nextMoveBtn">Следующий ▶</button></div></div>`;
+        document.body.appendChild(gameModalDiv);
+        document.getElementById("closeModalBtn")?.addEventListener("click",()=>document.getElementById("gameModal").style.display="none");
+        document.getElementById("prevMoveBtn")?.addEventListener("click",()=>{ if(currentReplayGame && currentReplayIndex>0){ currentReplayIndex--; renderReplayBoard(); } });
+        document.getElementById("nextMoveBtn")?.addEventListener("click",()=>{ if(currentReplayGame && currentReplayIndex<currentReplayGame.moves.length){ currentReplayIndex++; renderReplayBoard(); } });
+    </script>
 </body>
 </html>
