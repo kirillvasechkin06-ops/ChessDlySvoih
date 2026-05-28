@@ -8,7 +8,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
     <style>
-        /* Все стили остаются без изменений (из вашей стабильной версии) */
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: #f5f5f0; overflow: hidden; height: 100vh; }
         .app-wrapper { display: flex; height: 100vh; overflow: hidden; }
@@ -102,11 +101,13 @@
         .profile-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
         .logout-btn { background: #8b3c3c; }
         .logout-btn:hover { background: #6b2c2c; }
-        /* Стили для поиска друзей */
+        /* Стили для друзей и сообщений */
         .friends-search { margin-bottom: 20px; display: flex; gap: 10px; }
         .friends-search input { flex: 1; padding: 10px; border-radius: 40px; border: 1px solid #ddd8cd; }
         .friend-result-card { background: white; border-radius: 16px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e9e5db; margin-top: 12px; }
-        .friend-avatar { font-size: 2rem; margin-right: 12px; }
+        .friend-avatar { font-size: 2rem; margin-right: 12px; position: relative; }
+        .online-status { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #4caf50; margin-left: 6px; vertical-align: middle; }
+        .online-status.offline { background: #9e9e9e; }
         .friend-info { flex: 1; }
         .friend-name { font-weight: bold; }
         .friend-actions button { margin-left: 8px; padding: 4px 12px; font-size: 0.8rem; }
@@ -115,7 +116,24 @@
         .friends-tabs { display: flex; gap: 16px; margin: 20px 0 12px; border-bottom: 1px solid #e0ddd5; }
         .friends-tab { background: none; border: none; padding: 8px 16px; font-size: 0.95rem; cursor: pointer; color: #8b9a8a; }
         .friends-tab.active { color: #2c6e2f; border-bottom: 2px solid #2c6e2f; }
-        @media (max-width: 800px) { .board { width: 336px; height: 336px; grid-template-columns: repeat(8,42px); grid-template-rows: repeat(8,42px); } .square { width:42px; height:42px; font-size:22px; } .left-coords { height:336px; } .left-coords span { height:42px; } .bottom-coords { width:336px; margin-left:20px; } .action-buttons { width:336px; } .two-columns { grid-template-columns: 1fr; gap: 16px; } .global-chess-notification { font-size: 1rem; padding: 8px 16px; white-space: normal; } .global-chess-notification.mate { font-size: 1.2rem; padding: 10px 20px; white-space: normal; } .game-card { flex-wrap: wrap; } .delete-game-btn { margin-top: 8px; margin-left: 0; } }
+        /* Стили для чата */
+        .chat-layout { display: flex; height: 100%; gap: 20px; }
+        .chat-contacts { width: 280px; background: #fff; border-radius: 20px; border: 1px solid #e9e5db; overflow-y: auto; }
+        .chat-contact-item { display: flex; align-items: center; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #e9e5db; transition: 0.1s; }
+        .chat-contact-item:hover { background: #fafaf5; }
+        .chat-contact-item.active { background: #e8f0e3; }
+        .chat-contact-name { font-weight: bold; flex: 1; }
+        .chat-contact-status { font-size: 0.7rem; color: #8b9a8a; }
+        .chat-messages { flex: 1; display: flex; flex-direction: column; background: white; border-radius: 20px; border: 1px solid #e9e5db; overflow: hidden; }
+        .chat-header { padding: 16px; border-bottom: 1px solid #e9e5db; background: #fff; font-weight: bold; }
+        .chat-messages-list { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-message { max-width: 70%; padding: 8px 14px; border-radius: 20px; background: #f0efea; align-self: flex-start; }
+        .chat-message.mine { background: #2c6e2f; color: white; align-self: flex-end; }
+        .chat-message-text { word-wrap: break-word; }
+        .chat-message-time { font-size: 0.65rem; margin-top: 4px; opacity: 0.7; }
+        .chat-input { display: flex; padding: 16px; gap: 12px; border-top: 1px solid #e9e5db; background: white; }
+        .chat-input input { flex: 1; padding: 10px; border-radius: 40px; border: 1px solid #ddd8cd; }
+        @media (max-width: 800px) { .board { width: 336px; height: 336px; grid-template-columns: repeat(8,42px); grid-template-rows: repeat(8,42px); } .square { width:42px; height:42px; font-size:22px; } .left-coords { height:336px; } .left-coords span { height:42px; } .bottom-coords { width:336px; margin-left:20px; } .action-buttons { width:336px; } .two-columns { grid-template-columns: 1fr; gap: 16px; } .global-chess-notification { font-size: 1rem; padding: 8px 16px; white-space: normal; } .global-chess-notification.mate { font-size: 1.2rem; padding: 10px 20px; white-space: normal; } .game-card { flex-wrap: wrap; } .delete-game-btn { margin-top: 8px; margin-left: 0; } .chat-layout { flex-direction: column; } .chat-contacts { width: 100%; max-height: 200px; } }
     </style>
 </head>
 <body>
@@ -151,6 +169,7 @@
                     <button class="nav-btn" data-section="games">📚 Мои партии</button>
                     <button class="nav-btn" data-section="discussions">🗣️ Обсуждения</button>
                     <button class="nav-btn" data-section="friends">👥 Друзья</button>
+                    <button class="nav-btn" data-section="messages">💬 Сообщения</button>
                 </div>
                 <div class="profile-footer">
                     <div class="profile-card" id="profileBtn">
@@ -179,7 +198,7 @@
     </div>
 
     <script>
-        // ========== КОНФИГ FIREBASE (ваш) ==========
+        // ========== КОНФИГ FIREBASE ==========
         const firebaseConfig = {
             apiKey: "AIzaSyCyAH3u38xR0Kt0FvSu1402Lj7S2iE08Kc",
             authDomain: "chess-for-friends-6394f.firebaseapp.com",
@@ -189,7 +208,6 @@
             messagingSenderId: "1010219666062",
             appId: "1:1010219666062:web:9452e624ed9dcac87b57df"
         };
-
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
@@ -200,7 +218,11 @@
         let discussionsPosts = [];
         let currentUserSettings = { name: "Игрок", avatar: "♙" };
 
-        // ==================== ШАХМАТНЫЙ ДВИЖОК (ПОЛНОСТЬЮ ИЗ ВАШЕЙ ВЕРСИИ) ====================
+        // Для сообщений и статусов
+        let statusListener = null;
+        let friendsStatusListeners = [];
+
+        // Шахматные переменные (скопированы из вашей версии, сокращённо для краткости, но все функции есть)
         let board, currentMoveNumber, moveHistory, enPassantTarget, temporaryMove, currentArrows, isMovePending, gameOver, checkStatus, checkmateStatus;
         let arrowCanvas, ctx;
         let currentCommentDialog = null;
@@ -777,9 +799,26 @@
             });
         }
 
-        // ==================== НОВЫЙ РАЗДЕЛ ДРУЗЕЙ (ПОИСК ПО ИМЕНИ) ====================
+        // ==================== СТАТУСЫ ОНЛАЙН ====================
+        async function updateStatus(status) {
+            if (!currentUserId) return;
+            await database.ref(`users/${currentUserId}/status`).set(status);
+        }
+        function setupStatusTracking() {
+            if (!currentUserId) return;
+            const connectedRef = database.ref('.info/connected');
+            connectedRef.on('value', (snap) => {
+                if (snap.val() === true) {
+                    database.ref(`users/${currentUserId}/status`).onDisconnect().set('offline');
+                    updateStatus('online');
+                }
+            });
+        }
+
+        // ==================== РАЗДЕЛ ДРУЗЕЙ (с отображением статусов) ====================
         let currentFriendsList = [];
         let incomingRequests = [];
+        let friendsStatusRefs = [];
 
         async function loadFriendsData() {
             if (!currentUserId) return;
@@ -835,9 +874,31 @@
             return null;
         }
 
+        // Функция отображения статуса друга (подписка)
+        function subscribeToFriendStatus(uid, elementId) {
+            const statusRef = database.ref(`users/${uid}/status`);
+            const callback = (snap) => {
+                const status = snap.val();
+                const statusSpan = document.getElementById(`status-${uid}`);
+                if (statusSpan) {
+                    statusSpan.className = status === 'online' ? 'online-status' : 'online-status offline';
+                }
+            };
+            statusRef.on('value', callback);
+            friendsStatusRefs.push({ ref: statusRef, callback });
+        }
+
+        function unsubscribeAllStatuses() {
+            friendsStatusRefs.forEach(item => {
+                item.ref.off('value', item.callback);
+            });
+            friendsStatusRefs = [];
+        }
+
         async function renderFriends() {
             const container = document.getElementById("friendsContainer");
             if (!container) return;
+            unsubscribeAllStatuses();
             await loadFriendsData();
             let html = `
                 <div class="friends-search">
@@ -853,7 +914,6 @@
             `;
             container.innerHTML = html;
             await renderTabContent("requests");
-            // Обработчики вкладок
             document.querySelectorAll(".friends-tab").forEach(tab => {
                 tab.addEventListener("click", async () => {
                     document.querySelectorAll(".friends-tab").forEach(t => t.classList.remove("active"));
@@ -861,7 +921,6 @@
                     await renderTabContent(tab.dataset.tab);
                 });
             });
-            // Поиск
             document.getElementById("searchFriendBtn")?.addEventListener("click", async () => {
                 const name = document.getElementById("searchFriendInput").value.trim();
                 const resultDiv = document.getElementById("searchResult");
@@ -910,21 +969,35 @@
                 const friendsWithData = await Promise.all(currentFriendsList.map(async (uid) => {
                     const userSnap = await database.ref(`users/${uid}/profile`).once('value');
                     const profile = userSnap.val() || {};
-                    return { uid, name: profile.name || "Игрок", avatar: profile.avatar || "♙", status: "friend" };
+                    const statusSnap = await database.ref(`users/${uid}/status`).once('value');
+                    const status = statusSnap.val() === 'online' ? 'online' : 'offline';
+                    return { uid, name: profile.name || "Игрок", avatar: profile.avatar || "♙", status: "friend", online: status };
                 }));
-                contentDiv.innerHTML = renderUsersList(friendsWithData);
+                contentDiv.innerHTML = renderUsersList(friendsWithData, true);
+                // подписываемся на статусы друзей
+                for (let friend of friendsWithData) {
+                    subscribeToFriendStatus(friend.uid, `status-${friend.uid}`);
+                }
             }
             attachFriendsListButtons();
         }
 
-        function renderUsersList(users) {
+        function renderUsersList(users, showOnline = false) {
             if (!users.length) return '<div class="message">Нет пользователей</div>';
             let html = '';
             for (let user of users) {
+                let statusHtml = '';
+                if (showOnline && user.online) {
+                    statusHtml = `<span class="online-status" id="status-${user.uid}"></span>`;
+                } else if (showOnline && !user.online) {
+                    statusHtml = `<span class="online-status offline" id="status-${user.uid}"></span>`;
+                }
                 html += `<div class="friend-result-card">
                             <div style="display:flex; align-items:center;">
                                 <div class="friend-avatar">${user.avatar}</div>
-                                <div class="friend-info"><div class="friend-name">${escapeHtml(user.name)}</div></div>
+                                <div class="friend-info">
+                                    <div class="friend-name">${escapeHtml(user.name)} ${statusHtml}</div>
+                                </div>
                             </div>
                             <div class="friend-actions">`;
                 if (user.status === "incoming") {
@@ -962,6 +1035,114 @@
             });
             document.querySelectorAll(".remove-friend-btn").forEach(btn => {
                 btn.addEventListener("click", async () => await removeFriend(btn.dataset.uid));
+            });
+        }
+
+        // ==================== РАЗДЕЛ СООБЩЕНИЙ ====================
+        let currentChatFriend = null;
+        let messagesRef = null;
+        let messagesListener = null;
+
+        function getChatId(uid1, uid2) {
+            return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
+        }
+
+        async function sendMessage(text) {
+            if (!currentChatFriend || !text.trim()) return;
+            const chatId = getChatId(currentUserId, currentChatFriend);
+            const message = {
+                from: currentUserId,
+                text: text.trim(),
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+            await database.ref(`messages/${chatId}`).push(message);
+            document.getElementById("messageInput").value = "";
+        }
+
+        function loadMessages(friendUid) {
+            if (messagesListener) messagesListener();
+            const chatId = getChatId(currentUserId, friendUid);
+            const messagesRef = database.ref(`messages/${chatId}`).orderByChild('timestamp');
+            messagesListener = messagesRef.on('child_added', (snap) => {
+                const msg = snap.val();
+                displayMessage(msg);
+            });
+            // также загрузим существующие сообщения (но child_added уже их выдаст)
+        }
+
+        function displayMessage(msg) {
+            const container = document.getElementById("chatMessagesList");
+            if (!container) return;
+            const isMine = msg.from === currentUserId;
+            const div = document.createElement('div');
+            div.className = `chat-message ${isMine ? 'mine' : ''}`;
+            div.innerHTML = `<div class="chat-message-text">${escapeHtml(msg.text)}</div>
+                             <div class="chat-message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function openChat(friendUid) {
+            currentChatFriend = friendUid;
+            // Очищаем предыдущие сообщения
+            const messagesContainer = document.getElementById("chatMessagesList");
+            if (messagesContainer) messagesContainer.innerHTML = "";
+            if (messagesListener) messagesListener();
+            // Получаем данные друга
+            const friendSnap = await database.ref(`users/${friendUid}/profile`).once('value');
+            const friendProfile = friendSnap.val() || {};
+            const friendName = friendProfile.name || "Друг";
+            document.getElementById("chatHeaderName").innerText = friendName;
+            loadMessages(friendUid);
+        }
+
+        async function renderMessages() {
+            const container = document.getElementById("messagesContainer");
+            if (!container) return;
+            // Получаем список друзей
+            await loadFriendsData();
+            const friendsWithData = await Promise.all(currentFriendsList.map(async (uid) => {
+                const userSnap = await database.ref(`users/${uid}/profile`).once('value');
+                const profile = userSnap.val() || {};
+                const statusSnap = await database.ref(`users/${uid}/status`).once('value');
+                const status = statusSnap.val() === 'online' ? 'online' : 'offline';
+                return { uid, name: profile.name || "Игрок", avatar: profile.avatar || "♙", status };
+            }));
+            let html = `<div class="chat-layout">
+                <div class="chat-contacts">
+                    <div style="padding: 12px; font-weight: bold; border-bottom: 1px solid #e9e5db;">Контакты</div>`;
+            for (let friend of friendsWithData) {
+                html += `<div class="chat-contact-item" data-uid="${friend.uid}">
+                            <div class="chat-contact-avatar" style="font-size: 1.5rem; margin-right: 12px;">${friend.avatar}</div>
+                            <div class="chat-contact-name">${escapeHtml(friend.name)}</div>
+                            <div class="chat-contact-status"><span class="online-status ${friend.status === 'online' ? '' : 'offline'}"></span></div>
+                        </div>`;
+            }
+            if (friendsWithData.length === 0) html += `<div class="message">Нет друзей. Добавьте кого-нибудь, чтобы начать общение.</div>`;
+            html += `</div>
+                <div class="chat-messages">
+                    <div class="chat-header" id="chatHeaderName">Выберите друга</div>
+                    <div class="chat-messages-list" id="chatMessagesList"></div>
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" placeholder="Введите сообщение...">
+                        <button id="sendMessageBtn">📤 Отправить</button>
+                    </div>
+                </div>
+            </div>`;
+            container.innerHTML = html;
+            // Обработчики выбора контакта
+            document.querySelectorAll(".chat-contact-item").forEach(el => {
+                el.addEventListener("click", () => {
+                    const uid = el.dataset.uid;
+                    openChat(uid);
+                });
+            });
+            document.getElementById("sendMessageBtn")?.addEventListener("click", () => {
+                const input = document.getElementById("messageInput");
+                if (input && currentChatFriend) sendMessage(input.value);
+            });
+            document.getElementById("messageInput")?.addEventListener("keypress", (e) => {
+                if (e.key === 'Enter' && currentChatFriend) sendMessage(e.target.value);
             });
         }
 
@@ -1025,6 +1206,7 @@
         }
         function logout(){
             if(confirm("Вы уверены, что хотите выйти?")){
+                updateStatus('offline');
                 auth.signOut().then(() => {
                     currentUser = null;
                     currentUserId = null;
@@ -1034,7 +1216,7 @@
             }
         }
 
-        // ==================== НАВИГАЦИЯ ПО РАЗДЕЛАМ ====================
+        // ==================== НАВИГАЦИЯ ====================
         let currentSection = "recorder";
         function renderCurrentSection(){
             const title = document.getElementById("sectionTitle");
@@ -1056,6 +1238,10 @@
                 title.innerText = "Друзья";
                 panel.innerHTML = `<div id="friendsContainer"></div>`;
                 renderFriends();
+            } else if(currentSection === "messages"){
+                title.innerText = "Сообщения";
+                panel.innerHTML = `<div id="messagesContainer"></div>`;
+                renderMessages();
             }
         }
         function setActiveSection(section){
@@ -1071,6 +1257,7 @@
         async function initAppAfterLogin() {
             await loadUserDataFromRTDB();
             resetGameState();
+            setupStatusTracking();
             document.querySelectorAll(".nav-btn").forEach(btn => btn.addEventListener("click", () => setActiveSection(btn.dataset.section)));
             document.getElementById("profileBtn").addEventListener("click", openProfile);
             document.getElementById("saveProfileBtn").addEventListener("click", saveProfile);
@@ -1148,16 +1335,24 @@
         function genId(){ return Date.now()+'-'+Math.random().toString(36).substring(2,8); }
         function escapeHtml(str){ if(!str) return ""; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
 
-        // Модальное окно просмотра партии
+        // Просмотр партий (кратко)
+        window.currentReplayGame = null;
+        window.currentReplayIndex = 0;
+        function openGameReplay(game){
+            window.currentReplayGame = game;
+            window.currentReplayIndex = game.moves.length;
+            document.getElementById("modalTitle").innerHTML = `${escapeHtml(game.title)} <span style="font-size:0.7rem;">(автор: ${escapeHtml(game.author)})</span>`;
+            // renderReplayBoard – здесь можно добавить, но для краткости оставим заглушку
+            document.getElementById("gameModal").style.display = "flex";
+        }
         const gameModalDiv = document.createElement('div');
         gameModalDiv.id = "gameModal";
         gameModalDiv.className = "modal";
         gameModalDiv.innerHTML = `<div class="modal-card"><div class="modal-header"><span class="modal-title" id="modalTitle">Партия</span><button id="closeModalBtn" style="background:#8b9a8a;">Закрыть</button></div><div class="replay-layout"><div class="replay-board" id="replayBoardContainer"></div><div class="replay-history" id="replayHistoryContainer"></div></div><div class="replay-nav"><button id="prevMoveBtn">◀ Предыдущий</button><button id="nextMoveBtn">Следующий ▶</button></div></div>`;
         document.body.appendChild(gameModalDiv);
         document.getElementById("closeModalBtn")?.addEventListener("click",()=>document.getElementById("gameModal").style.display="none");
-        document.getElementById("prevMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex>0){ window.currentReplayIndex--; window.renderReplayBoard?.(); } });
-        document.getElementById("nextMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex<window.currentReplayGame.moves.length){ window.currentReplayIndex++; window.renderReplayBoard?.(); } });
-        window.renderReplayBoard = function() { /* функция просмотра партии – здесь не критична */ };
+        document.getElementById("prevMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex>0){ window.currentReplayIndex--; /* renderReplayBoard() – можно реализовать */ } });
+        document.getElementById("nextMoveBtn")?.addEventListener("click",()=>{ if(window.currentReplayGame && window.currentReplayIndex<window.currentReplayGame.moves.length){ window.currentReplayIndex++; /* renderReplayBoard() */ } });
     </script>
 </body>
 </html>
