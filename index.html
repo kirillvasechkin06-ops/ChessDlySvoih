@@ -799,7 +799,7 @@
             border: 1px solid #ddd8cd;
         }
 
-        /* ========== МОБИЛЬНЫЕ СТИЛИ (ТОЛЬКО ДЛЯ ТЕЛЕФОНОВ) ========== */
+        /* ========== МОБИЛЬНЫЕ СТИЛИ (максимально широкая доска как в Chess.com) ========== */
         @media (max-width: 768px) {
             html, body {
                 overflow-x: hidden;
@@ -850,10 +850,9 @@
                 width: 100%;
             }
             .content-panel {
-                padding: 0 16px 16px 16px;
+                padding: 0 8px 16px 8px;  /* уменьшили боковые отступы для максимальной ширины доски */
                 overflow-x: hidden;
             }
-            /* Центрирование доски и истории */
             .two-columns {
                 grid-template-columns: 1fr;
                 gap: 16px;
@@ -871,14 +870,20 @@
                 max-height: 300px;
                 width: 100%;
             }
-            /* Адаптивная доска с центровкой */
+            /* Доска занимает почти всю ширину экрана */
+            .chessboard-with-coords {
+                width: 100%;
+                align-items: center;
+            }
             .board-wrapper {
                 width: 100%;
                 display: flex;
                 justify-content: center;
                 margin: 0 auto;
                 transform: none;
-                padding: 6px;
+                padding: 4px;
+                background: #2c3e2f;
+                border-radius: 8px;
             }
             .board {
                 width: 100%;
@@ -891,39 +896,36 @@
             .square {
                 width: auto;
                 height: auto;
-                font-size: calc(16px + 2vw);
+                font-size: calc(20px + 2vw);
                 touch-action: manipulation;
                 cursor: pointer;
             }
             /* Координаты подстраиваются под ширину доски и центрируются */
-            .chessboard-with-coords {
-                width: 100%;
-                align-items: center;
-            }
             .left-coords {
                 height: auto;
                 justify-content: space-between;
                 margin-right: 4px;
-                font-size: 10px;
+                font-size: 11px;
+                width: 20px;
             }
             .left-coords span {
                 height: auto;
-                width: auto;
+                width: 100%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex: 1;
-                font-size: 10px;
+                font-size: 11px;
             }
             .bottom-coords {
-                width: 100%;
-                margin-left: 0;
+                width: calc(100% - 24px);
+                margin-left: 24px;
                 margin-top: 6px;
                 justify-content: space-around;
             }
             .bottom-coords span {
                 width: auto;
-                font-size: 10px;
+                font-size: 11px;
                 text-align: center;
                 flex: 1;
             }
@@ -988,13 +990,13 @@
             }
         }
 
-        /* для очень маленьких экранов */
+        /* Очень маленькие экраны (ширина до 480px) */
         @media (max-width: 480px) {
             .square {
-                font-size: calc(14px + 2vw);
+                font-size: calc(18px + 2vw);
             }
             .left-coords span, .bottom-coords span {
-                font-size: 8px;
+                font-size: 10px;
             }
         }
     </style>
