@@ -133,45 +133,150 @@
         
         /* ========== МОБИЛЬНЫЕ СТИЛИ (ТОЛЬКО ДЛЯ ТЕЛЕФОНОВ) ========== */
         @media (max-width: 768px) {
-            body { overflow: hidden; touch-action: pan-x pan-y; }
-            .sidebar-menu { position: fixed; bottom: 0; left: 0; right: 0; top: auto; width: 100%; height: auto; background: #fff; border-right: none; border-top: 1px solid #e0ddd5; z-index: 100; flex-direction: row; justify-content: space-around; padding: 8px 12px; overflow-x: auto; }
+            body { overflow-x: hidden; touch-action: pan-x pan-y; }
+            .app-wrapper { overflow-x: hidden; }
+            .sidebar-menu {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                width: 100%;
+                height: auto;
+                background: #fff;
+                border-right: none;
+                border-top: 1px solid #e0ddd5;
+                z-index: 100;
+                flex-direction: row;
+                justify-content: space-around;
+                padding: 8px 12px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
             .logo-area, .profile-footer { display: none; }
-            .nav-buttons { flex-direction: row; padding: 0; gap: 8px; overflow-x: auto; }
-            .nav-btn { padding: 8px 16px; font-size: 0.8rem; white-space: nowrap; }
-            .main-content { margin-bottom: 60px; }
-            .board-wrapper { transform: scale(0.9); margin: -20px auto; }
-            .board { width: 360px; height: 360px; grid-template-columns: repeat(8, 45px); grid-template-rows: repeat(8, 45px); }
-            .square { width: 45px; height: 45px; font-size: 22px; touch-action: manipulation; cursor: pointer; }
-            .left-coords { height: 360px; }
-            .left-coords span { height: 45px; width: 18px; font-size: 10px; }
-            .bottom-coords { width: 360px; margin-left: 24px; }
-            .bottom-coords span { width: 45px; font-size: 10px; }
-            .action-buttons button { padding: 10px 0; font-size: 0.9rem; }
-            .controls-panel { flex-wrap: wrap; padding: 8px; gap: 8px; }
+            .nav-buttons {
+                flex-direction: row;
+                padding: 0;
+                gap: 8px;
+                overflow-x: auto;
+            }
+            .nav-btn {
+                padding: 8px 16px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+            .main-content {
+                margin-bottom: 60px;
+                overflow-x: hidden;
+            }
+            /* Адаптивная доска — без фиксированной ширины, без горизонтальной прокрутки */
+            .board-wrapper {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin: 0 auto;
+                transform: none;
+                padding: 6px;
+            }
+            .board {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+                grid-template-columns: repeat(8, 1fr);
+                grid-template-rows: repeat(8, 1fr);
+                background: #e0ddd5;
+            }
+            .square {
+                width: auto;
+                height: auto;
+                font-size: calc(16px + 2vw);
+                touch-action: manipulation;
+                cursor: pointer;
+            }
+            .left-coords {
+                height: auto;
+                justify-content: space-between;
+                margin-right: 4px;
+                font-size: 10px;
+            }
+            .left-coords span {
+                height: auto;
+                width: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex: 1;
+                font-size: 10px;
+            }
+            .bottom-coords {
+                width: 100%;
+                margin-left: 0;
+                margin-top: 6px;
+                justify-content: space-around;
+            }
+            .bottom-coords span {
+                width: auto;
+                font-size: 10px;
+                text-align: center;
+                flex: 1;
+            }
+            .action-buttons button {
+                padding: 10px 0;
+                font-size: 0.9rem;
+            }
+            .controls-panel {
+                flex-wrap: wrap;
+                padding: 8px;
+                gap: 8px;
+            }
             .turn-indicator { font-size: 0.75rem; }
             .btn-group button { padding: 6px 12px; font-size: 0.75rem; }
             .history-col h3 { font-size: 0.9rem; }
             .history-move { font-size: 0.8rem; }
             .history-comment { font-size: 0.7rem; }
-            .two-columns { grid-template-columns: 1fr; gap: 16px; height: auto; }
+            .two-columns {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                height: auto;
+            }
             .left-col { order: 1; }
-            .history-col { order: 2; height: auto; max-height: 300px; }
-            .chat-layout { flex-direction: column; }
-            .chat-contacts { width: 100%; max-height: 200px; }
-            .friend-result-card { flex-wrap: wrap; gap: 8px; }
-            .friend-actions button { padding: 8px 12px; font-size: 0.8rem; }
-            .comment-side-dialog { width: 280px; left: 50% !important; transform: translateX(-50%); top: 50% !important; transform: translate(-50%, -50%); }
+            .history-col {
+                order: 2;
+                height: auto;
+                max-height: 300px;
+            }
+            .chat-layout {
+                flex-direction: column;
+            }
+            .chat-contacts {
+                width: 100%;
+                max-height: 200px;
+            }
+            .friend-result-card {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .friend-actions button {
+                padding: 8px 12px;
+                font-size: 0.8rem;
+            }
+            .comment-side-dialog {
+                width: 280px;
+                left: 50% !important;
+                transform: translateX(-50%);
+                top: 50% !important;
+                transform: translate(-50%, -50%);
+            }
         }
         
         /* для очень маленьких экранов */
         @media (max-width: 480px) {
-            .board-wrapper { transform: scale(0.8); margin: -40px auto; }
-            .board { width: 320px; height: 320px; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); }
-            .square { width: 40px; height: 40px; font-size: 20px; }
-            .left-coords { height: 320px; }
-            .left-coords span { height: 40px; }
-            .bottom-coords { width: 320px; }
-            .bottom-coords span { width: 40px; }
+            .square {
+                font-size: calc(14px + 2vw);
+            }
+            .left-coords span, .bottom-coords span {
+                font-size: 8px;
+            }
         }
     </style>
 </head>
