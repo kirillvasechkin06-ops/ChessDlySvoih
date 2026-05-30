@@ -799,7 +799,7 @@
             border: 1px solid #ddd8cd;
         }
 
-        /* ========== МОБИЛЬНЫЕ СТИЛИ – доска на всю ширину ========== */
+        /* ========== МОБИЛЬНЫЕ СТИЛИ – доска на всю ширину без отступов, маленькие координаты ========== */
         @media (max-width: 768px) {
             html, body {
                 overflow-x: hidden !important;
@@ -812,10 +812,9 @@
             .app-wrapper {
                 overflow-x: hidden !important;
             }
+            /* Убираем все боковые отступы у контента */
             .content-panel {
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                padding-bottom: 16px !important;
+                padding: 0 !important;
             }
             .sidebar-menu {
                 position: fixed;
@@ -861,15 +860,20 @@
                 width: 100% !important;
                 max-width: 100% !important;
             }
+            /* Доска на всю ширину без отступов */
+            .chessboard-with-coords {
+                width: 100%;
+                align-items: center;
+            }
             .board-wrapper {
                 width: 100% !important;
                 max-width: 100% !important;
                 display: flex !important;
                 justify-content: center !important;
-                margin: 0 auto !important;
-                padding: 4px !important;
+                margin: 0 !important;
+                padding: 0 !important;
                 background: #2c3e2f;
-                border-radius: 8px;
+                border-radius: 0;
                 box-sizing: border-box;
             }
             .board {
@@ -878,59 +882,73 @@
                 aspect-ratio: 1 / 1 !important;
                 grid-template-columns: repeat(8, 1fr) !important;
                 grid-template-rows: repeat(8, 1fr) !important;
+                border-radius: 0;
             }
             .square {
                 width: auto !important;
                 height: auto !important;
-                font-size: calc(22px + 2vw) !important;
+                font-size: calc(24px + 2vw) !important;
                 touch-action: manipulation;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
             }
-            .chessboard-with-coords {
-                width: 100%;
-                align-items: center;
-            }
+            /* Координаты: маленькие, утоплены в крайние клетки */
             .board-row-coords {
                 width: 100%;
                 justify-content: center;
+                position: relative;
             }
             .left-coords {
-                height: auto !important;
+                position: absolute;
+                left: 2px;
+                top: 0;
+                height: 100%;
+                width: 16px !important;
                 justify-content: space-between;
-                margin-right: 4px;
-                width: 22px !important;
-                font-size: 11px;
+                margin: 0;
+                pointer-events: none;
+                z-index: 2;
             }
             .left-coords span {
-                height: auto !important;
+                font-size: 9px !important;
                 width: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex: 1;
-                font-size: 11px;
+                height: auto;
+                color: #5e6e5a;
+                background: transparent;
+                text-shadow: 0 0 1px white;
             }
             .bottom-coords {
-                width: calc(100% - 26px) !important;
-                margin-left: 26px !important;
-                margin-top: 6px;
+                position: absolute;
+                bottom: 2px;
+                left: 0;
+                width: 100%;
+                margin: 0;
                 justify-content: space-around;
+                pointer-events: none;
+                z-index: 2;
             }
             .bottom-coords span {
-                width: auto;
-                font-size: 11px;
-                text-align: center;
-                flex: 1;
+                font-size: 9px !important;
+                color: #5e6e5a;
+                text-shadow: 0 0 1px white;
             }
+            /* Так как координаты абсолютные, нужно, чтобы родитель был relative */
+            .chessboard-with-coords {
+                position: relative;
+            }
+            .board-row-coords {
+                position: relative;
+            }
+            /* Кнопки управления */
             .controls-panel {
                 width: 100% !important;
                 max-width: 100% !important;
                 flex-wrap: wrap;
                 padding: 8px;
                 gap: 8px;
+                border-radius: 0;
             }
             .action-buttons {
                 width: 100% !important;
@@ -972,10 +990,10 @@
 
         @media (max-width: 480px) {
             .square {
-                font-size: calc(18px + 2vw) !important;
+                font-size: calc(20px + 2vw) !important;
             }
             .left-coords span, .bottom-coords span {
-                font-size: 9px;
+                font-size: 8px !important;
             }
         }
     </style>
@@ -1265,7 +1283,6 @@
             if(!canvas) return;
             arrowCanvas = canvas;
             ctx = canvas.getContext('2d');
-            // Размеры будем брать из реального DOM-элемента
             const boardEl = document.querySelector('.board');
             if(boardEl) {
                 const rect = boardEl.getBoundingClientRect();
@@ -1641,7 +1658,6 @@
                     ${historyHtml}
                 </div>
             `;
-            // Инициализация canvas с правильными размерами
             initArrowCanvas();
             setupArrowDrawing();
             if (!isMobile) {
