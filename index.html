@@ -2,12 +2,13 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>ChessДляСвоих — Облачная версия</title>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
     <style>
+        /* Базовые стили для всех устройств */
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: #f5f5f0; overflow: hidden; height: 100vh; }
         .app-wrapper { display: flex; height: 100vh; overflow: hidden; }
@@ -101,7 +102,6 @@
         .profile-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
         .logout-btn { background: #8b3c3c; }
         .logout-btn:hover { background: #6b2c2c; }
-        /* Стили для друзей и сообщений */
         .friends-search { margin-bottom: 20px; display: flex; gap: 10px; }
         .friends-search input { flex: 1; padding: 10px; border-radius: 40px; border: 1px solid #ddd8cd; }
         .friend-result-card { background: white; border-radius: 16px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #e9e5db; margin-top: 12px; }
@@ -130,7 +130,49 @@
         .chat-message-time { font-size: 0.65rem; margin-top: 4px; opacity: 0.7; }
         .chat-input { display: flex; padding: 16px; gap: 12px; border-top: 1px solid #e9e5db; background: white; }
         .chat-input input { flex: 1; padding: 10px; border-radius: 40px; border: 1px solid #ddd8cd; }
-        @media (max-width: 800px) { .board { width: 336px; height: 336px; grid-template-columns: repeat(8,42px); grid-template-rows: repeat(8,42px); } .square { width:42px; height:42px; font-size:22px; } .left-coords { height:336px; } .left-coords span { height:42px; } .bottom-coords { width:336px; margin-left:20px; } .action-buttons { width:336px; } .two-columns { grid-template-columns: 1fr; gap: 16px; } .global-chess-notification { font-size: 1rem; padding: 8px 16px; white-space: normal; } .global-chess-notification.mate { font-size: 1.2rem; padding: 10px 20px; white-space: normal; } .game-card { flex-wrap: wrap; } .delete-game-btn { margin-top: 8px; margin-left: 0; } .chat-layout { flex-direction: column; } .chat-contacts { width: 100%; max-height: 200px; } }
+        
+        /* ========== МОБИЛЬНЫЕ СТИЛИ (ТОЛЬКО ДЛЯ ТЕЛЕФОНОВ) ========== */
+        @media (max-width: 768px) {
+            body { overflow: hidden; touch-action: pan-x pan-y; }
+            .sidebar-menu { position: fixed; bottom: 0; left: 0; right: 0; top: auto; width: 100%; height: auto; background: #fff; border-right: none; border-top: 1px solid #e0ddd5; z-index: 100; flex-direction: row; justify-content: space-around; padding: 8px 12px; overflow-x: auto; }
+            .logo-area, .profile-footer { display: none; }
+            .nav-buttons { flex-direction: row; padding: 0; gap: 8px; overflow-x: auto; }
+            .nav-btn { padding: 8px 16px; font-size: 0.8rem; white-space: nowrap; }
+            .main-content { margin-bottom: 60px; }
+            .board-wrapper { transform: scale(0.9); margin: -20px auto; }
+            .board { width: 360px; height: 360px; grid-template-columns: repeat(8, 45px); grid-template-rows: repeat(8, 45px); }
+            .square { width: 45px; height: 45px; font-size: 22px; touch-action: manipulation; cursor: pointer; }
+            .left-coords { height: 360px; }
+            .left-coords span { height: 45px; width: 18px; font-size: 10px; }
+            .bottom-coords { width: 360px; margin-left: 24px; }
+            .bottom-coords span { width: 45px; font-size: 10px; }
+            .action-buttons button { padding: 10px 0; font-size: 0.9rem; }
+            .controls-panel { flex-wrap: wrap; padding: 8px; gap: 8px; }
+            .turn-indicator { font-size: 0.75rem; }
+            .btn-group button { padding: 6px 12px; font-size: 0.75rem; }
+            .history-col h3 { font-size: 0.9rem; }
+            .history-move { font-size: 0.8rem; }
+            .history-comment { font-size: 0.7rem; }
+            .two-columns { grid-template-columns: 1fr; gap: 16px; height: auto; }
+            .left-col { order: 1; }
+            .history-col { order: 2; height: auto; max-height: 300px; }
+            .chat-layout { flex-direction: column; }
+            .chat-contacts { width: 100%; max-height: 200px; }
+            .friend-result-card { flex-wrap: wrap; gap: 8px; }
+            .friend-actions button { padding: 8px 12px; font-size: 0.8rem; }
+            .comment-side-dialog { width: 280px; left: 50% !important; transform: translateX(-50%); top: 50% !important; transform: translate(-50%, -50%); }
+        }
+        
+        /* для очень маленьких экранов */
+        @media (max-width: 480px) {
+            .board-wrapper { transform: scale(0.8); margin: -40px auto; }
+            .board { width: 320px; height: 320px; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); }
+            .square { width: 40px; height: 40px; font-size: 20px; }
+            .left-coords { height: 320px; }
+            .left-coords span { height: 40px; }
+            .bottom-coords { width: 320px; }
+            .bottom-coords span { width: 40px; }
+        }
     </style>
 </head>
 <body>
@@ -195,7 +237,7 @@
     </div>
 
     <script>
-        // ========== КОНФИГ FIREBASE ==========
+        // ========== КОНФИГ FIREBASE (ваш) ==========
         const firebaseConfig = {
             apiKey: "AIzaSyCyAH3u38xR0Kt0FvSu1402Lj7S2iE08Kc",
             authDomain: "chess-for-friends-6394f.firebaseapp.com",
@@ -215,17 +257,16 @@
         let discussionsPosts = [];
         let currentUserSettings = { name: "Игрок", avatar: "♙" };
 
-        // Для сообщений и статусов
-        let statusListener = null;
-        let friendsStatusRefs = [];
-
-        // Шахматные переменные (сокращённо, но все функции есть)
+        // Шахматные переменные
         let board, currentMoveNumber, moveHistory, enPassantTarget, temporaryMove, currentArrows, isMovePending, gameOver, checkStatus, checkmateStatus;
         let arrowCanvas, ctx;
         let currentCommentDialog = null;
         let dragStartRow = null, dragStartCol = null;
 
-        // ==================== ШАХМАТНЫЙ ДВИЖОК ====================
+        // Определяем мобильное устройство
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
+        // ==================== ШАХМАТНЫЙ ДВИЖОК (с поддержкой touch для мобильных) ====================
         function getInitialBoard() {
             let b = Array(8).fill().map(() => Array(8).fill(null));
             const pieces = ['rook','knight','bishop','queen','king','bishop','knight','rook'];
@@ -516,6 +557,43 @@
                 drawAllArrows();
             });
         }
+        
+        // Touch support для мобильных устройств
+        function setupMobileTouchDrag() {
+            if (!isMobile) return;
+            const squares = document.querySelectorAll('.square');
+            let touchStartRow = null, touchStartCol = null;
+            
+            squares.forEach(sq => {
+                sq.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const targetSq = target?.closest('.square');
+                    if (targetSq) {
+                        touchStartRow = parseInt(targetSq.dataset.row);
+                        touchStartCol = parseInt(targetSq.dataset.col);
+                    }
+                }, { passive: false });
+                
+                sq.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    if (touchStartRow !== null && touchStartCol !== null) {
+                        const touch = e.changedTouches[0];
+                        const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                        const targetSq = target?.closest('.square');
+                        if (targetSq) {
+                            const toRow = parseInt(targetSq.dataset.row);
+                            const toCol = parseInt(targetSq.dataset.col);
+                            applyTemporaryMove(touchStartRow, touchStartCol, toRow, toCol);
+                        }
+                    }
+                    touchStartRow = null;
+                    touchStartCol = null;
+                });
+            });
+        }
+        
         function showCommentDialog(san, callback) {
             if (currentCommentDialog) currentCommentDialog.remove();
             const boardRect = document.querySelector('.board-wrapper').getBoundingClientRect();
@@ -529,8 +607,16 @@
                     <button id="submitCommentBtn">✅ Сохранить</button>
                 </div>
             `;
-            dialog.style.left = (boardRect.right + 20) + 'px';
-            dialog.style.top = boardRect.top + 'px';
+            if (isMobile) {
+                dialog.style.left = '50%';
+                dialog.style.top = '50%';
+                dialog.style.transform = 'translate(-50%, -50%)';
+                dialog.style.width = '90%';
+                dialog.style.maxWidth = '320px';
+            } else {
+                dialog.style.left = (boardRect.right + 20) + 'px';
+                dialog.style.top = boardRect.top + 'px';
+            }
             document.body.appendChild(dialog);
             const textarea = dialog.querySelector('#commentTextarea');
             textarea.focus();
@@ -547,6 +633,7 @@
             };
             currentCommentDialog = dialog;
         }
+        
         function applyTemporaryMove(fromRow, fromCol, toRow, toCol){
             if(isMovePending) { alert("Сначала подтвердите или отмените текущий ход"); return false; }
             if(gameOver) { alert("Партия завершена (мат). Начните новую партию."); return false; }
@@ -578,6 +665,7 @@
             renderRecorder();
             return true;
         }
+        
         function commitTemporaryMove(){
             if(!temporaryMove){ alert("Сначала сделайте ход (перетащите фигуру)"); return; }
             const finalArrows = [...currentArrows];
@@ -602,6 +690,7 @@
                 saveCurrentUserData();
             });
         }
+        
         function undoLastMove(){
             if(temporaryMove){
                 board = temporaryMove.oldBoard;
@@ -634,10 +723,11 @@
             renderRecorder();
             saveCurrentUserData();
         }
+        
         function setupDragAndDrop(){
             const squares = document.querySelectorAll(".square");
             squares.forEach(sq=>{
-                sq.setAttribute('draggable','true');
+                sq.setAttribute('draggable', 'true');
                 sq.ondragstart = (e)=>{
                     if(isMovePending){ e.preventDefault(); alert("Сначала подтвердите или отмените текущий ход"); return false; }
                     if(gameOver){ e.preventDefault(); alert("Партия завершена. Начните новую партию."); return false; }
@@ -669,6 +759,7 @@
                 };
             });
         }
+        
         function renderRecorder(){
             const container = document.getElementById("recorderContainer");
             if(!container) return;
@@ -723,7 +814,11 @@
             `;
             initArrowCanvas();
             setupArrowDrawing();
-            setupDragAndDrop();
+            if (!isMobile) {
+                setupDragAndDrop();
+            } else {
+                setupMobileTouchDrag();
+            }
             document.getElementById("clearArrowsBtn")?.addEventListener("click",clearCurrentArrows);
             document.getElementById("cancelLastMoveBtn")?.addEventListener("click",undoLastMove);
             document.getElementById("confirmMoveBtn")?.addEventListener("click",commitTemporaryMove);
@@ -744,6 +839,8 @@
                 });
             });
         }
+        
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
         function renderDiscussions(){
             const container = document.getElementById("discussionsContainer");
             if(!container) return;
@@ -754,6 +851,7 @@
             container.innerHTML=html;
             document.getElementById("createPostBtn")?.addEventListener("click",()=>{ let t=prompt("Заголовок"), txt=prompt("Текст"); if(t&&txt){ discussionsPosts.unshift({ id:genId(), author:currentUserSettings.name, title:t, text:txt, date:new Date().toLocaleString() }); saveCurrentUserData(); renderDiscussions(); } });
         }
+        
         function renderGamesList(){
             const container = document.getElementById("gamesContainer");
             if(!container) return;
@@ -796,12 +894,13 @@
                 });
             });
         }
-
-        // ==================== СТАТУСЫ ОНЛАЙН ====================
-        async function updateStatus(status) {
-            if (!currentUserId) return;
-            await database.ref(`users/${currentUserId}/status`).set(status);
-        }
+        
+        // ==================== СТАТУСЫ, ДРУЗЬЯ, СООБЩЕНИЯ (как в предыдущей версии) ====================
+        let currentFriendsList = [];
+        let incomingRequests = [];
+        let friendsStatusRefs = [];
+        
+        async function updateStatus(status) { if (!currentUserId) return; await database.ref(`users/${currentUserId}/status`).set(status); }
         function setupStatusTracking() {
             if (!currentUserId) return;
             const connectedRef = database.ref('.info/connected');
@@ -812,11 +911,7 @@
                 }
             });
         }
-
-        // ==================== РАЗДЕЛ ДРУЗЕЙ ====================
-        let currentFriendsList = [];
-        let incomingRequests = [];
-
+        
         async function loadFriendsData() {
             if (!currentUserId) return;
             const userRef = database.ref(`users/${currentUserId}`);
@@ -825,7 +920,7 @@
             currentFriendsList = data.friends ? Object.keys(data.friends) : [];
             incomingRequests = data.friendRequests?.received ? Object.keys(data.friendRequests.received) : [];
         }
-
+        
         async function sendFriendRequest(targetUid) {
             if (!currentUserId || targetUid === currentUserId) return;
             await database.ref(`users/${currentUserId}/friendRequests/sent/${targetUid}`).set(true);
@@ -833,7 +928,7 @@
             alert("Заявка отправлена");
             renderFriends();
         }
-
+        
         async function acceptFriendRequest(fromUid) {
             await database.ref(`users/${currentUserId}/friends/${fromUid}`).set(true);
             await database.ref(`users/${fromUid}/friends/${currentUserId}`).set(true);
@@ -842,13 +937,13 @@
             alert("Теперь вы друзья");
             renderFriends();
         }
-
+        
         async function declineFriendRequest(fromUid) {
             await database.ref(`users/${currentUserId}/friendRequests/received/${fromUid}`).remove();
             await database.ref(`users/${fromUid}/friendRequests/sent/${currentUserId}`).remove();
             renderFriends();
         }
-
+        
         async function removeFriend(friendUid) {
             if (confirm("Удалить из друзей?")) {
                 await database.ref(`users/${currentUserId}/friends/${friendUid}`).remove();
@@ -856,7 +951,7 @@
                 renderFriends();
             }
         }
-
+        
         async function searchUserByName(username) {
             if (!username.trim()) return null;
             const snapshot = await database.ref('users').once('value');
@@ -870,7 +965,7 @@
             }
             return null;
         }
-
+        
         function subscribeToFriendStatus(uid, elementId) {
             const statusRef = database.ref(`users/${uid}/status`);
             const callback = (snap) => {
@@ -883,14 +978,12 @@
             statusRef.on('value', callback);
             friendsStatusRefs.push({ ref: statusRef, callback });
         }
-
+        
         function unsubscribeAllStatuses() {
-            friendsStatusRefs.forEach(item => {
-                item.ref.off('value', item.callback);
-            });
+            friendsStatusRefs.forEach(item => { item.ref.off('value', item.callback); });
             friendsStatusRefs = [];
         }
-
+        
         async function renderFriends() {
             const container = document.getElementById("friendsContainer");
             if (!container) return;
@@ -922,10 +1015,7 @@
                 const resultDiv = document.getElementById("searchResult");
                 if (!name) { resultDiv.innerHTML = '<div class="message">Введите имя</div>'; return; }
                 const user = await searchUserByName(name);
-                if (!user) {
-                    resultDiv.innerHTML = '<div class="message">❌ Пользователь не найден</div>';
-                    return;
-                }
+                if (!user) { resultDiv.innerHTML = '<div class="message">❌ Пользователь не найден</div>'; return; }
                 let status = "none";
                 if (currentFriendsList.includes(user.uid)) status = "friend";
                 else if (incomingRequests.includes(user.uid)) status = "incoming";
@@ -950,7 +1040,7 @@
                 attachResultButtons();
             });
         }
-
+        
         async function renderTabContent(tab) {
             const contentDiv = document.getElementById("friendsTabContent");
             if (!contentDiv) return;
@@ -970,21 +1060,17 @@
                     return { uid, name: profile.name || "Игрок", avatar: profile.avatar || "♙", status: "friend", online: status };
                 }));
                 contentDiv.innerHTML = renderUsersList(friendsWithData, true);
-                for (let friend of friendsWithData) {
-                    subscribeToFriendStatus(friend.uid, `status-${friend.uid}`);
-                }
+                for (let friend of friendsWithData) subscribeToFriendStatus(friend.uid, `status-${friend.uid}`);
             }
             attachFriendsListButtons();
         }
-
+        
         function renderUsersList(users, showOnline = false) {
             if (!users.length) return '<div class="message">Нет пользователей</div>';
             let html = '';
             for (let user of users) {
                 let statusHtml = '';
-                if (showOnline) {
-                    statusHtml = `<span class="online-status ${user.online === 'online' ? '' : 'offline'}" id="status-${user.uid}"></span>`;
-                }
+                if (showOnline) statusHtml = `<span class="online-status ${user.online === 'online' ? '' : 'offline'}" id="status-${user.uid}"></span>`;
                 html += `<div class="friend-result-card">
                             <div style="display:flex; align-items:center;">
                                 <div class="friend-avatar">${user.avatar}</div>
@@ -1003,87 +1089,61 @@
             }
             return html;
         }
-
+        
         function attachResultButtons() {
-            document.querySelectorAll(".add-friend-btn").forEach(btn => {
-                btn.addEventListener("click", async () => await sendFriendRequest(btn.dataset.uid));
-            });
-            document.querySelectorAll(".accept-friend-btn").forEach(btn => {
-                btn.addEventListener("click", async () => await acceptFriendRequest(btn.dataset.uid));
-            });
-            document.querySelectorAll(".decline-friend-btn").forEach(btn => {
-                btn.addEventListener("click", async () => await declineFriendRequest(btn.dataset.uid));
-            });
-            document.querySelectorAll(".remove-friend-btn").forEach(btn => {
-                btn.addEventListener("click", async () => await removeFriend(btn.dataset.uid));
-            });
+            document.querySelectorAll(".add-friend-btn").forEach(btn => { btn.addEventListener("click", async () => await sendFriendRequest(btn.dataset.uid)); });
+            document.querySelectorAll(".accept-friend-btn").forEach(btn => { btn.addEventListener("click", async () => await acceptFriendRequest(btn.dataset.uid)); });
+            document.querySelectorAll(".decline-friend-btn").forEach(btn => { btn.addEventListener("click", async () => await declineFriendRequest(btn.dataset.uid)); });
+            document.querySelectorAll(".remove-friend-btn").forEach(btn => { btn.addEventListener("click", async () => await removeFriend(btn.dataset.uid)); });
         }
-
+        
         function attachFriendsListButtons() {
-            document.querySelectorAll(".accept-friend-btn").forEach(btn => {
-                btn.addEventListener("click", async () => await acceptFriendRequest(btn.dataset.uid));
-            });
-            document.querySelectorAll(".decline-friend-btn").forEach(btn => {
-                btn.addEventListener("click", async () => await declineFriendRequest(btn.dataset.uid));
-            });
-            document.querySelectorAll(".remove-friend-btn").forEach(btn => {
-                btn.addEventListener("click", async () => await removeFriend(btn.dataset.uid));
-            });
+            document.querySelectorAll(".accept-friend-btn").forEach(btn => { btn.addEventListener("click", async () => await acceptFriendRequest(btn.dataset.uid)); });
+            document.querySelectorAll(".decline-friend-btn").forEach(btn => { btn.addEventListener("click", async () => await declineFriendRequest(btn.dataset.uid)); });
+            document.querySelectorAll(".remove-friend-btn").forEach(btn => { btn.addEventListener("click", async () => await removeFriend(btn.dataset.uid)); });
         }
-
-        // ==================== РАЗДЕЛ СООБЩЕНИЙ (БЕЗ ДУБЛИРОВАНИЯ) ====================
+        
+        // ==================== СООБЩЕНИЯ ====================
         let currentChatFriend = null;
         let currentChatListenerRef = null;
         let currentChatListenerCallback = null;
-
-        function getChatId(uid1, uid2) {
-            return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
-        }
-
+        
+        function getChatId(uid1, uid2) { return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`; }
+        
         async function sendMessage(text) {
             if (!currentChatFriend || !text.trim()) return;
             const chatId = getChatId(currentUserId, currentChatFriend);
-            const message = {
-                from: currentUserId,
-                text: text.trim(),
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            };
-            await database.ref(`messages/${chatId}`).push(message);
+            await database.ref(`messages/${chatId}`).push({
+                from: currentUserId, text: text.trim(), timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
             const inputField = document.getElementById("messageInput");
             if (inputField) inputField.value = "";
         }
-
+        
         function displayMessage(msg, container) {
             const isMine = msg.from === currentUserId;
             const div = document.createElement('div');
             div.className = `chat-message ${isMine ? 'mine' : ''}`;
-            div.innerHTML = `<div class="chat-message-text">${escapeHtml(msg.text)}</div>
-                             <div class="chat-message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>`;
+            div.innerHTML = `<div class="chat-message-text">${escapeHtml(msg.text)}</div><div class="chat-message-time">${new Date(msg.timestamp).toLocaleTimeString()}</div>`;
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
         }
-
+        
         async function loadChatHistory(chatId, container, onNewMessage) {
             const snapshot = await database.ref(`messages/${chatId}`).orderByChild('timestamp').once('value');
             const messages = snapshot.val();
             if (messages) {
                 const sorted = Object.values(messages).sort((a,b) => a.timestamp - b.timestamp);
-                for (let msg of sorted) {
-                    displayMessage(msg, container);
-                }
+                for (let msg of sorted) displayMessage(msg, container);
             }
-            // подписываемся на новые сообщения
             const callback = database.ref(`messages/${chatId}`).orderByChild('timestamp').startAfter(Date.now()).on('child_added', (snap) => {
                 const newMsg = snap.val();
-                if (newMsg && newMsg.from !== currentUserId) {
-                    displayMessage(newMsg, container);
-                }
+                if (newMsg && newMsg.from !== currentUserId) displayMessage(newMsg, container);
             });
             return callback;
         }
-
+        
         async function openChat(friendUid) {
-            // отписываемся от предыдущего чата
             if (currentChatListenerRef && currentChatListenerCallback) {
                 currentChatListenerRef.off('child_added', currentChatListenerCallback);
             }
@@ -1091,7 +1151,6 @@
             const messagesContainer = document.getElementById("chatMessagesList");
             if (!messagesContainer) return;
             messagesContainer.innerHTML = "";
-            // получаем данные друга
             const friendSnap = await database.ref(`users/${friendUid}/profile`).once('value');
             const friendProfile = friendSnap.val() || {};
             const friendName = friendProfile.name || "Друг";
@@ -1100,24 +1159,18 @@
             const chatId = getChatId(currentUserId, friendUid);
             currentChatListenerRef = database.ref(`messages/${chatId}`);
             const callback = await loadChatHistory(chatId, messagesContainer, null);
-            // сохраняем callback для отписки
             currentChatListenerCallback = callback;
-            // также подписываемся на новые сообщения через отдельный listener
             const newMsgRef = database.ref(`messages/${chatId}`).orderByChild('timestamp');
             const newMsgCallback = newMsgRef.on('child_added', (snap) => {
                 const newMsg = snap.val();
-                if (newMsg && newMsg.from !== currentUserId && messagesContainer) {
-                    displayMessage(newMsg, messagesContainer);
-                }
+                if (newMsg && newMsg.from !== currentUserId && messagesContainer) displayMessage(newMsg, messagesContainer);
             });
-            // сохраняем для отписки
             currentChatListenerCallback = newMsgCallback;
         }
-
+        
         async function renderMessages() {
             const container = document.getElementById("messagesContainer");
             if (!container) return;
-            // отписываемся от предыдущего чата, если он был открыт
             if (currentChatListenerRef && currentChatListenerCallback) {
                 currentChatListenerRef.off('child_added', currentChatListenerCallback);
             }
@@ -1151,12 +1204,8 @@
                 </div>
             </div>`;
             container.innerHTML = html;
-            // Обработчики выбора контакта
             document.querySelectorAll(".chat-contact-item").forEach(el => {
-                el.addEventListener("click", () => {
-                    const uid = el.dataset.uid;
-                    openChat(uid);
-                });
+                el.addEventListener("click", () => openChat(el.dataset.uid));
             });
             document.getElementById("sendMessageBtn")?.addEventListener("click", () => {
                 const input = document.getElementById("messageInput");
@@ -1166,7 +1215,7 @@
                 if (e.key === 'Enter' && currentChatFriend) sendMessage(e.target.value);
             });
         }
-
+        
         // ==================== ЗАГРУЗКА ДАННЫХ ПОЛЬЗОВАТЕЛЯ ====================
         async function loadUserDataFromRTDB() {
             if (!currentUser) return;
@@ -1180,7 +1229,7 @@
             document.getElementById("headerName").innerText = currentUserSettings.name;
             document.getElementById("headerAvatar").innerHTML = currentUserSettings.avatar;
         }
-
+        
         async function saveCurrentUserData() {
             if (!currentUser) return;
             const userRef = database.ref(`users/${currentUserId}`);
@@ -1190,7 +1239,7 @@
                 discussions: discussionsPosts
             });
         }
-
+        
         // ==================== ПРОФИЛЬ И ВЫХОД ====================
         function openProfile(){
             const modal = document.getElementById("profileModal");
@@ -1236,7 +1285,7 @@
                 });
             }
         }
-
+        
         // ==================== НАВИГАЦИЯ ====================
         let currentSection = "recorder";
         function renderCurrentSection(){
@@ -1273,7 +1322,7 @@
             });
             renderCurrentSection();
         }
-
+        
         // ==================== ИНИЦИАЛИЗАЦИЯ ПОСЛЕ ВХОДА ====================
         async function initAppAfterLogin() {
             await loadUserDataFromRTDB();
@@ -1286,7 +1335,7 @@
             document.getElementById("logoutBtn").addEventListener("click", logout);
             setActiveSection("recorder");
         }
-
+        
         // ==================== АУТЕНТИФИКАЦИЯ ====================
         auth.onAuthStateChanged(async (user) => {
             if (user) {
@@ -1300,7 +1349,7 @@
                 document.getElementById("authModal").style.display = "flex";
             }
         });
-
+        
         // ==================== ОБРАБОТЧИКИ ВХОДА/РЕГИСТРАЦИИ ====================
         const loginTab = document.querySelector("[data-tab='login']");
         const registerTab = document.querySelector("[data-tab='register']");
@@ -1324,11 +1373,7 @@
             const errorDiv = document.getElementById("loginError");
             errorDiv.textContent = "";
             if (!email || !password) { errorDiv.textContent = "Заполните все поля"; return; }
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-            } catch (err) {
-                errorDiv.textContent = err.message;
-            }
+            try { await auth.signInWithEmailAndPassword(email, password); } catch (err) { errorDiv.textContent = err.message; }
         });
         document.getElementById("registerBtn").addEventListener("click", async () => {
             const email = document.getElementById("regEmail").value.trim();
@@ -1341,22 +1386,14 @@
             try {
                 const cred = await auth.createUserWithEmailAndPassword(email, password);
                 const userRef = database.ref(`users/${cred.user.uid}`);
-                await userRef.set({
-                    profile: { name: name, avatar: "♙" },
-                    games: [],
-                    discussions: [],
-                    friends: {},
-                    friendRequests: { sent: {}, received: {} }
-                });
-            } catch (err) {
-                errorDiv.textContent = err.message;
-            }
+                await userRef.set({ profile: { name: name, avatar: "♙" }, games: [], discussions: [], friends: {}, friendRequests: { sent: {}, received: {} } });
+            } catch (err) { errorDiv.textContent = err.message; }
         });
-
+        
         function genId(){ return Date.now()+'-'+Math.random().toString(36).substring(2,8); }
         function escapeHtml(str){ if(!str) return ""; return str.replace(/[&<>]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m])); }
-
-        // Просмотр партий (заглушка)
+        
+        // Просмотр партий
         window.currentReplayGame = null;
         window.currentReplayIndex = 0;
         function openGameReplay(game){
